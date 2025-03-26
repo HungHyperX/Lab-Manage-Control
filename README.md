@@ -23,4 +23,9 @@
   ```cmd
   sc.exe delete NewWindowsService
   ```
+
+## File Log:
+  - Vị trí: C:/Logs/
+  - File Log sẽ rotate 10 file, mỗi file 50 MB
+  
      
