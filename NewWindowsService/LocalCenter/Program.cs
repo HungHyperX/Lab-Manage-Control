@@ -17,7 +17,7 @@ namespace LocalCenter
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[] 
             { 
-                new Service1() 
+                new LocalCenter() 
             };
             ServiceBase.Run(ServicesToRun);
         }

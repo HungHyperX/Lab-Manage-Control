@@ -1,17 +1,33 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "D:\\\u0110ATN\\NewWindowsService\\",
+  "WorkspaceRootPath": "D:\\DATN\\NewWindowsService\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7F8ABD33-21F1-424F-802B-736595E0B9BE}|NewWindowsService\\NewWindowsService.csproj|d:\\\u0111atn\\newwindowsservice\\newwindowsservice\\mynewservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7F8ABD33-21F1-424F-802B-736595E0B9BE}|NewWindowsService\\NewWindowsService.csproj|solutionrelative:newwindowsservice\\mynewservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{0FCC2AAB-B24F-498E-BFED-4A4FED493706}|LocalCenter\\LocalCenter.csproj|d:\\datn\\newwindowsservice\\localcenter\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{0FCC2AAB-B24F-498E-BFED-4A4FED493706}|LocalCenter\\LocalCenter.csproj|solutionrelative:localcenter\\app.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7F8ABD33-21F1-424F-802B-736595E0B9BE}|NewWindowsService\\NewWindowsService.csproj|D:\\\u0110ATN\\NewWindowsService\\NewWindowsService\\App.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "AbsoluteMoniker": "D:0:0:{7F8ABD33-21F1-424F-802B-736595E0B9BE}|NewWindowsService\\NewWindowsService.csproj|D:\\DATN\\NewWindowsService\\NewWindowsService\\App.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
       "RelativeMoniker": "D:0:0:{7F8ABD33-21F1-424F-802B-736595E0B9BE}|NewWindowsService\\NewWindowsService.csproj|solutionrelative:NewWindowsService\\App.config||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7F8ABD33-21F1-424F-802B-736595E0B9BE}|NewWindowsService\\NewWindowsService.csproj|D:\\\u0110ATN\\NewWindowsService\\newwindowsservice\\mynewservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{7F8ABD33-21F1-424F-802B-736595E0B9BE}|NewWindowsService\\NewWindowsService.csproj|D:\\DATN\\NewWindowsService\\newwindowsservice\\mynewservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7F8ABD33-21F1-424F-802B-736595E0B9BE}|NewWindowsService\\NewWindowsService.csproj|solutionrelative:newwindowsservice\\mynewservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0FCC2AAB-B24F-498E-BFED-4A4FED493706}|LocalCenter\\LocalCenter.csproj|D:\\DATN\\NewWindowsService\\localcenter\\localcenter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0FCC2AAB-B24F-498E-BFED-4A4FED493706}|LocalCenter\\LocalCenter.csproj|solutionrelative:localcenter\\localcenter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0FCC2AAB-B24F-498E-BFED-4A4FED493706}|LocalCenter\\LocalCenter.csproj|D:\\DATN\\NewWindowsService\\localcenter\\localcenter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{0FCC2AAB-B24F-498E-BFED-4A4FED493706}|LocalCenter\\LocalCenter.csproj|solutionrelative:localcenter\\localcenter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{0FCC2AAB-B24F-498E-BFED-4A4FED493706}|LocalCenter\\LocalCenter.csproj|D:\\DATN\\NewWindowsService\\localcenter\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{0FCC2AAB-B24F-498E-BFED-4A4FED493706}|LocalCenter\\LocalCenter.csproj|solutionrelative:localcenter\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7F8ABD33-21F1-424F-802B-736595E0B9BE}|NewWindowsService\\NewWindowsService.csproj|D:\\DATN\\NewWindowsService\\newwindowsservice\\mynewservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{7F8ABD33-21F1-424F-802B-736595E0B9BE}|NewWindowsService\\NewWindowsService.csproj|solutionrelative:newwindowsservice\\mynewservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     }
   ],
@@ -22,41 +38,88 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "App.config",
+              "DocumentMoniker": "D:\\DATN\\NewWindowsService\\LocalCenter\\App.config",
+              "RelativeDocumentMoniker": "LocalCenter\\App.config",
+              "ToolTip": "D:\\DATN\\NewWindowsService\\LocalCenter\\App.config",
+              "RelativeToolTip": "LocalCenter\\App.config",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
+              "WhenOpened": "2025-03-26T16:54:46.467Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "LocalCenter.cs",
+              "DocumentMoniker": "D:\\DATN\\NewWindowsService\\LocalCenter\\LocalCenter.cs",
+              "RelativeDocumentMoniker": "LocalCenter\\LocalCenter.cs",
+              "ToolTip": "D:\\DATN\\NewWindowsService\\LocalCenter\\LocalCenter.cs",
+              "RelativeToolTip": "LocalCenter\\LocalCenter.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-26T16:44:35.427Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "LocalCenter.cs [Design]",
+              "DocumentMoniker": "D:\\DATN\\NewWindowsService\\LocalCenter\\LocalCenter.cs",
+              "RelativeDocumentMoniker": "LocalCenter\\LocalCenter.cs",
+              "ToolTip": "D:\\\u0110ATN\\NewWindowsService\\LocalCenter\\LocalCenter.cs [Design]",
+              "RelativeToolTip": "..\\..\\\u0110ATN\\NewWindowsService\\LocalCenter\\LocalCenter.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-26T16:44:28.819Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\DATN\\NewWindowsService\\LocalCenter\\Program.cs",
+              "RelativeDocumentMoniker": "LocalCenter\\Program.cs",
+              "ToolTip": "D:\\DATN\\NewWindowsService\\LocalCenter\\Program.cs",
+              "RelativeToolTip": "LocalCenter\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-26T16:43:21.131Z"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "App.config",
-              "DocumentMoniker": "D:\\\u0110ATN\\NewWindowsService\\NewWindowsService\\App.config",
+              "DocumentMoniker": "D:\\DATN\\NewWindowsService\\NewWindowsService\\App.config",
               "RelativeDocumentMoniker": "NewWindowsService\\App.config",
-              "ToolTip": "D:\\\u0110ATN\\NewWindowsService\\NewWindowsService\\App.config",
+              "ToolTip": "D:\\DATN\\NewWindowsService\\NewWindowsService\\App.config",
               "RelativeToolTip": "NewWindowsService\\App.config",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAKAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
               "WhenOpened": "2025-03-19T14:01:30.193Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "MyNewService.cs",
-              "DocumentMoniker": "D:\\\u0110ATN\\NewWindowsService\\NewWindowsService\\MyNewService.cs",
+              "DocumentMoniker": "D:\\DATN\\NewWindowsService\\NewWindowsService\\MyNewService.cs",
               "RelativeDocumentMoniker": "NewWindowsService\\MyNewService.cs",
-              "ToolTip": "D:\\\u0110ATN\\NewWindowsService\\NewWindowsService\\MyNewService.cs",
+              "ToolTip": "D:\\DATN\\NewWindowsService\\NewWindowsService\\MyNewService.cs",
               "RelativeToolTip": "NewWindowsService\\MyNewService.cs",
-              "ViewState": "AgIAAC4AAAAAAAAAAAAwwDsAAAAsAAAAAAAAAA==",
+              "ViewState": "AgIAAFAAAAAAAAAAAAApwFsAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-19T13:07:48.967Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-19T13:07:48.967Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 6,
               "Title": "MyNewService.cs [Design]",
-              "DocumentMoniker": "D:\\\u0110ATN\\NewWindowsService\\NewWindowsService\\MyNewService.cs",
+              "DocumentMoniker": "D:\\DATN\\NewWindowsService\\NewWindowsService\\MyNewService.cs",
               "RelativeDocumentMoniker": "NewWindowsService\\MyNewService.cs",
-              "ToolTip": "D:\\NewWindowsService\\NewWindowsService\\MyNewService.cs [Design]",
-              "RelativeToolTip": "..\\..\\NewWindowsService\\NewWindowsService\\MyNewService.cs [Design]",
+              "ToolTip": "D:\\\u0110ATN\\NewWindowsService\\NewWindowsService\\MyNewService.cs [Design]",
+              "RelativeToolTip": "..\\..\\\u0110ATN\\NewWindowsService\\NewWindowsService\\MyNewService.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-15T13:19:44.732Z"
             }

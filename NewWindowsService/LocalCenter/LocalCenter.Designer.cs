@@ -1,6 +1,6 @@
 ﻿namespace LocalCenter
 {
-    partial class Service1
+    partial class LocalCenter
     {
         /// <summary> 
         /// Required designer variable.
