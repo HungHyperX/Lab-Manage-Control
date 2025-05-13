@@ -41,6 +41,7 @@
   ![image](https://github.com/user-attachments/assets/e667bfbe-b00b-475b-93c0-26e399a3a5ab)
 
   - Chuột phải vào Service, chọn *Properties*, chọn *Log On*
+  
   ![image](https://github.com/user-attachments/assets/1e8810b9-5b70-4934-be47-140e21de6626)
 
   - Chọn *This account*, điền tên và mật khẩu người dùng hiện tại hoặc người dùng khác có trên máy. Sau đó nhấn *Apply*
