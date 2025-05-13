@@ -1,4 +1,4 @@
-[# Cách sử dụng Terminal Service
+# Cách sử dụng Terminal Service
   ## Xem Terminal Service:
   Ấn "Window" --> Gõ tìm kiếm "Services" --> Tìm Service: **NewWindowsService**
 
