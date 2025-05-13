@@ -40,7 +40,7 @@
   - Xem Terminal Service (Hướng dẫn ở trên)
   ![image](https://github.com/user-attachments/assets/e667bfbe-b00b-475b-93c0-26e399a3a5ab)
 
-  - Chuột phải vào Service, chọn *Properties*, chọn *Log On*
+  - Chuột phải vào NewWindowsService, chọn *Properties*, chọn *Log On*
   
   ![image](https://github.com/user-attachments/assets/1e8810b9-5b70-4934-be47-140e21de6626)
 
@@ -62,7 +62,7 @@
   - Nạp code TestBoard.ino vào thiết bị
     ![9793fb66-fcec-43c6-b3cc-3fdcddd6eab7](https://github.com/user-attachments/assets/f2c17277-f469-4076-893b-7270438d8db7)
     
-  - Thiết lập mặc định Com Port là COM7, và thiệt lập Serial là 115200.
+  - Thiết lập mặc định *ComPort* là COM7, và thiệt lập *Serial* là 115200.
 
 
   
