@@ -1,6 +1,6 @@
 [# Cách sử dụng Terminal Service
   ## Xem Terminal Service:
-  Ấn "Window" --> Gõ tìm kiếm "Services" --> Tìm Service: NewWindowsService
+  Ấn "Window" --> Gõ tìm kiếm "Services" --> Tìm Service: **NewWindowsService**
 
   ## Cách chạy Terminal Service:
   1. Build chương trình
@@ -56,6 +56,14 @@
     ```cmd
     .\TerminalConf.exe -r B1-206 -i 22
     ```
+
+  ## IV. Chạy thiết bị nhúng
+
+  - Nạp code TestBoard.ino vào thiết bị
+    ![9793fb66-fcec-43c6-b3cc-3fdcddd6eab7](https://github.com/user-attachments/assets/f2c17277-f469-4076-893b-7270438d8db7)
+    
+  - THiết lập Port là COM7, và thiệt lập Serial là 115200.
+
 
   
      
