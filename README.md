@@ -1,7 +1,8 @@
-## Xem Terminal Service:
+# Cách sử dụng Terminal Service
+  ## Xem Terminal Service:
   Ấn "Window" --> Gõ tìm kiếm "Services" --> Tìm Service: NewWindowsService
 
-## Cách chạy Terminal Service:
+  ## Cách chạy Terminal Service:
   1. Build chương trình
   2. Mở Termial(Admin)
   3. Tạo Service: 
@@ -12,8 +13,8 @@
   ```cmd
   net start NewWindowsService
   ```
-
-## Cách dừng/tắt Terminal Service:
+  
+  ## Cách dừng/tắt Terminal Service:
   1. Mở Terminal(Admin)
   2. Dừng Service:
   ```cmd
@@ -23,9 +24,13 @@
   ```cmd
   sc.exe delete NewWindowsService
   ```
-
-## File Log:
+  
+  ## File Log:
   - Vị trí: C:/Logs/
   - File Log sẽ rotate 10 file, mỗi file 50 MB
+
+# Cách sử dụng Project
+  ## I. Cài đặt TerminalService:
+  1.  Mở NewWindowsService/
   
      
