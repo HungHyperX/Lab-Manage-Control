@@ -59,9 +59,10 @@
 
   ## IV. Chạy thiết bị nhúng
 
-  - Nạp code TestBoard.ino vào thiết bị
+  - Nạp code TestBoard.ino vào thiết bị.
     ![9793fb66-fcec-43c6-b3cc-3fdcddd6eab7](https://github.com/user-attachments/assets/f2c17277-f469-4076-893b-7270438d8db7)
-    
+
+  - Giữ nút BOOT khi nạp code. Khi thấy hiện ra chứ Connecting.... thì hãy nhấn nút RST rồi thả ra, sau 1 giây thả nút BOOT ra. Rồi khi code nạp xong hãy nhất RST 1 lần. 
   - Thiết lập mặc định *ComPort* là COM7, và thiệt lập *Serial* là 115200.
 
 
