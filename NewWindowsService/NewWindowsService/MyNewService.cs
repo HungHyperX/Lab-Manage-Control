@@ -8,8 +8,14 @@ using log4net;
 using MQTTnet;
 using MQTTnet.Client;
 using System.Diagnostics;
+using System.Text;
+using System.Configuration;
+using NewWindowsService.Properties;
+using System.IO;
+using System.IO.Ports;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
+
 namespace NewWindowsService
 {
     public partial class MyNewService : ServiceBase
@@ -18,14 +24,15 @@ namespace NewWindowsService
         private System.Timers.Timer timer;
         private IMqttClient _client;
         private IMqttClientOptions _options;
-        private readonly string _broker = "test.mosquitto.org"; // MQTT Broker
+        private SerialPort _serialPort;
+        private readonly string _broker = "test.mosquitto.org";
         private readonly int _port = 1883;
-        private readonly string _topic = "may1/thongtin";
+        private readonly string _pubTopic = "may1/thongtin";
+        private readonly string _subTopic = "may1/subTerminal";
 
         public MyNewService()
         {
             InitializeComponent();
-            SetFirewallState(false);
             InitializeMQTT();
         }
 
@@ -37,16 +44,102 @@ namespace NewWindowsService
             _options = new MqttClientOptionsBuilder()
                 .WithTcpServer(_broker, _port)
                 .Build();
+
+            _client.ApplicationMessageReceived += (s, e) =>
+            {
+                string message = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+                log.Info($"Received MQTT Message from {e.ApplicationMessage.Topic}: {message}");
+
+                if (e.ApplicationMessage.Topic == _subTopic)
+                {
+                    if (message.Trim().ToUpper() == "ON")
+                    {
+                        log.Info("Turning Firewall ON");
+                        SetFirewallState(true);
+                    }
+                    else if (message.Trim().ToUpper() == "OFF")
+                    {
+                        log.Info("Turning Firewall OFF");
+                        SetFirewallState(false);
+                    }
+                }
+            };
         }
 
         protected override void OnStart(string[] args)
         {
             log.Info("Terminal Service Started.");
-            Console.WriteLine("Hello World");
 
-            timer = new System.Timers.Timer(10000); // Chạy mỗi 10 giây
+            if (!IsUserConfigCreated())
+            {
+                Properties.Settings.Default.roomNumber = "B1-221";
+                Properties.Settings.Default.comNumber = "24";
+                Properties.Settings.Default.Save();
+                log.Info("Ghi cấu hình mặc định vì user.config chưa tồn tại.");
+            }
+            else
+            {
+                log.Info($"Đọc cấu hình từ user.config: Room = {Properties.Settings.Default.roomNumber}, Com = {Properties.Settings.Default.comNumber}");
+            }
+
+            // Khởi tạo Serial Port
+            _serialPort = new SerialPort("COM7", 115200); // Cập nhật COM port thực tế nếu khác
+            _serialPort.Encoding = Encoding.UTF8;
+            _serialPort.NewLine = "\n";
+
+            try
+            {
+                if (!_serialPort.IsOpen)
+                    _serialPort.Open();
+                log.Info("Serial port opened successfully.");
+            }
+            catch (Exception ex)
+            {
+                log.Error("Error opening serial port", ex);
+            }
+
+            timer = new System.Timers.Timer(20000); // 20 giây
             timer.Elapsed += async (sender, e) => await OnElapsedTime();
             timer.Start();
+
+            Task.Run(() => ConnectAndSubscribe());
+        }
+
+        protected override void OnStop()
+        {
+            log.Info("Terminal Service Stopped.");
+            timer.Stop();
+
+            if (_serialPort != null && _serialPort.IsOpen)
+            {
+                _serialPort.Close();
+                log.Info("Serial port closed.");
+            }
+        }
+
+        private bool IsUserConfigCreated()
+        {
+            var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal);
+            return File.Exists(config.FilePath);
+        }
+
+        private async Task ConnectAndSubscribe()
+        {
+            try
+            {
+                if (!_client.IsConnected)
+                {
+                    await _client.ConnectAsync(_options);
+                    log.Info("Connected to MQTT Broker.");
+                }
+
+                await _client.SubscribeAsync(new TopicFilterBuilder().WithTopic(_subTopic).Build());
+                log.Info($"Subscribed to topic: {_subTopic}");
+            }
+            catch (Exception ex)
+            {
+                log.Error("Error connecting to MQTT or subscribing to topic", ex);
+            }
         }
 
         private async Task OnElapsedTime()
@@ -60,14 +153,27 @@ namespace NewWindowsService
             string diskInfo = GetDiskInfo();
             string hostname = GetHostname();
             string firewallStatus = GetFirewallStatusNetsh();
-            //log.Info($"Firewall Status: {firewallStatus}");
+            string roomNumber = Properties.Settings.Default.roomNumber;
+            string comNumber = Properties.Settings.Default.comNumber;
 
-            string message = $"{{ \"IP\": \"{ipAddress}\", \"MAC\": \"{macAddress}\", \"CPU\": \"{cpuInfo}\", \"RAM\": \"{ramInfo}\", \"Disk\": \"{diskInfo}\", \"Hostname\": \"{hostname}\", \"Firewall\": \"{firewallStatus}\" }}";
+            string message = $"{{ \"Room\": \"{roomNumber}\", \"Com\": \"{comNumber}\", \"IP\": \"{ipAddress}\", \"MAC\": \"{macAddress}\", \"CPU\": \"{cpuInfo}\", \"RAM\": \"{ramInfo}\", \"Disk\": \"{diskInfo}\", \"Hostname\": \"{hostname}\", \"Firewall\": \"{firewallStatus}\" }}";
             log.Info($"Sending data to MQTT: {message}");
 
             await SendToMQTT(message);
 
-            SetFirewallState(false);
+            // Gửi qua Serial
+            try
+            {
+                if (_serialPort != null && _serialPort.IsOpen)
+                {
+                    _serialPort.WriteLine(message);
+                    log.Info("Sent data over Serial: " + message);
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error("Error sending data over Serial", ex);
+            }
         }
 
         private async Task SendToMQTT(string message)
@@ -77,29 +183,20 @@ namespace NewWindowsService
                 if (!_client.IsConnected)
                 {
                     await _client.ConnectAsync(_options);
-                    //log.Info("Connected to MQTT Broker.");
                 }
 
                 var mqttMessage = new MqttApplicationMessageBuilder()
-                    .WithTopic(_topic)
+                    .WithTopic(_pubTopic)
                     .WithPayload(message)
                     .WithRetainFlag()
                     .Build();
 
                 await _client.PublishAsync(mqttMessage);
-                //log.Info("Data sent to MQTT successfully.");
             }
             catch (Exception ex)
             {
-                //log.Error("Error sending data to MQTT", ex);
+                log.Error("Error sending data to MQTT", ex);
             }
-        }
-
-
-        protected override void OnStop()
-        {
-            log.Info("Terminal Service Stopped.");
-            timer.Stop();
         }
 
         private void SetFirewallState(bool enable)
@@ -141,7 +238,6 @@ namespace NewWindowsService
                 log.Error("Error executing firewall command", ex);
             }
         }
-
 
         private string GetLocalIPAddress()
         {
@@ -248,9 +344,7 @@ namespace NewWindowsService
             return "Unknown";
         }
 
-        //  dùng WMI (Win32_Service) không đủ chính xác vì dịch vụ MpsSvc vẫn có thể chạy ngay cả khi tường lửa bị tắt.
-        //Dùng netsh để kiểm tra trạng thái thật của tường lửa(ON/OFF).
-        private string GetFirewallStatusNetsh() 
+        private string GetFirewallStatusNetsh()
         {
             try
             {
@@ -276,6 +370,5 @@ namespace NewWindowsService
             }
             return "Unknown";
         }
-
     }
 }
