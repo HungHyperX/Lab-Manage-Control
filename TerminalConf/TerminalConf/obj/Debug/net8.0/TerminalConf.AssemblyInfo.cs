@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TerminalConf")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2db192e98a93ff1b942cea6bca89f44276a31452")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+09faaabf140ef5a1eb81096ff215e76660b96bc7")]
 [assembly: System.Reflection.AssemblyProductAttribute("TerminalConf")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TerminalConf")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

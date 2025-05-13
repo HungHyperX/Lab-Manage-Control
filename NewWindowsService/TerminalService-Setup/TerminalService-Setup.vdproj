@@ -28,7 +28,7 @@
         "Entry"
         {
         "MsmKey" = "8:_315A21EE00362E2E4F6DB1AFB8AC70CF"
-        "OwnerKey" = "8:_FBCC3F4650BD421D83683DFCB908142D"
+        "OwnerKey" = "8:_55A205D6A532436FBE8F096EA2469D1D"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -40,13 +40,19 @@
         "Entry"
         {
         "MsmKey" = "8:_48712971354A3402F122F976AD8F31A1"
-        "OwnerKey" = "8:_FBCC3F4650BD421D83683DFCB908142D"
+        "OwnerKey" = "8:_55A205D6A532436FBE8F096EA2469D1D"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_55A205D6A532436FBE8F096EA2469D1D"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_5B7BC0ADB4BEC3DC0B476E50E10DC9DE"
-        "OwnerKey" = "8:_FBCC3F4650BD421D83683DFCB908142D"
+        "OwnerKey" = "8:_55A205D6A532436FBE8F096EA2469D1D"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -58,13 +64,13 @@
         "Entry"
         {
         "MsmKey" = "8:_72B464C67CC8C13BC0632B16896A81E4"
-        "OwnerKey" = "8:_FBCC3F4650BD421D83683DFCB908142D"
+        "OwnerKey" = "8:_55A205D6A532436FBE8F096EA2469D1D"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_893431BC045B4400212E26E330CDAE0E"
-        "OwnerKey" = "8:_FBCC3F4650BD421D83683DFCB908142D"
+        "OwnerKey" = "8:_55A205D6A532436FBE8F096EA2469D1D"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -81,12 +87,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_FBCC3F4650BD421D83683DFCB908142D"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_ACE6FF9FBABC1BDA7512A3938679C877"
         "MsmSig" = "8:_UNDEFINED"
@@ -94,7 +94,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_FBCC3F4650BD421D83683DFCB908142D"
+        "OwnerKey" = "8:_55A205D6A532436FBE8F096EA2469D1D"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -211,59 +211,59 @@
     {
         "CustomAction"
         {
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_3A49C542F5A54C10BACB2702EFCDBE98"
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_0E0A5D85B34544C588F87C830380C478"
             {
             "Name" = "8:Primary output from NewWindowsService (Active)"
             "Condition" = "8:"
-            "Object" = "8:_FBCC3F4650BD421D83683DFCB908142D"
-            "FileType" = "3:2"
-            "InstallAction" = "3:2"
-            "Arguments" = "8:"
-            "EntryPoint" = "8:"
-            "Sequence" = "3:1"
-            "Identifier" = "8:_595D1EF1_5DFD_4ABF_8253_C8E26F5CEFD5"
-            "InstallerClass" = "11:TRUE"
-            "CustomActionData" = "8:"
-            }
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_95225C307BD44C918A19AECC3C29B77C"
-            {
-            "Name" = "8:Primary output from NewWindowsService (Active)"
-            "Condition" = "8:"
-            "Object" = "8:_FBCC3F4650BD421D83683DFCB908142D"
-            "FileType" = "3:2"
-            "InstallAction" = "3:4"
-            "Arguments" = "8:"
-            "EntryPoint" = "8:"
-            "Sequence" = "3:1"
-            "Identifier" = "8:_96DF6E01_FC62_4895_8CB4_70CC56C0CF0A"
-            "InstallerClass" = "11:TRUE"
-            "CustomActionData" = "8:"
-            }
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_9B9D78848B744430B3DE3905181B5645"
-            {
-            "Name" = "8:Primary output from NewWindowsService (Active)"
-            "Condition" = "8:"
-            "Object" = "8:_FBCC3F4650BD421D83683DFCB908142D"
+            "Object" = "8:_55A205D6A532436FBE8F096EA2469D1D"
             "FileType" = "3:2"
             "InstallAction" = "3:3"
             "Arguments" = "8:"
             "EntryPoint" = "8:"
             "Sequence" = "3:1"
-            "Identifier" = "8:_ED13A12E_C71C_4DC2_9E59_BF4424CBD989"
+            "Identifier" = "8:_4EBF8DC4_FD5E_4652_93E7_D0E1F80A3619"
             "InstallerClass" = "11:TRUE"
             "CustomActionData" = "8:"
             }
-            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_DECE8DC4C41B4908A09ABE28A4EB032C"
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_D44D1BA62A8C4A0A8A57EFAD04EDFC92"
             {
             "Name" = "8:Primary output from NewWindowsService (Active)"
             "Condition" = "8:"
-            "Object" = "8:_FBCC3F4650BD421D83683DFCB908142D"
+            "Object" = "8:_55A205D6A532436FBE8F096EA2469D1D"
             "FileType" = "3:2"
             "InstallAction" = "3:1"
             "Arguments" = "8:"
             "EntryPoint" = "8:"
             "Sequence" = "3:1"
-            "Identifier" = "8:_D54CE585_396B_476A_BB59_E931F76AD4B0"
+            "Identifier" = "8:_B49A87DD_CBE3_4AEC_A4FE_052901D75EE1"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_E25584EA697C47DBAF2110FA089FD115"
+            {
+            "Name" = "8:Primary output from NewWindowsService (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_55A205D6A532436FBE8F096EA2469D1D"
+            "FileType" = "3:2"
+            "InstallAction" = "3:2"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_198DC59B_753D_45AB_8A95_C5417A53381A"
+            "InstallerClass" = "11:TRUE"
+            "CustomActionData" = "8:"
+            }
+            "{4AA51A2D-7D85-4A59-BA75-B0809FC8B380}:_EB3A5C7E72B64A6DBD2BF73DAAF3DDD2"
+            {
+            "Name" = "8:Primary output from NewWindowsService (Active)"
+            "Condition" = "8:"
+            "Object" = "8:_55A205D6A532436FBE8F096EA2469D1D"
+            "FileType" = "3:2"
+            "InstallAction" = "3:4"
+            "Arguments" = "8:"
+            "EntryPoint" = "8:"
+            "Sequence" = "3:1"
+            "Identifier" = "8:_A1A8D6E7_0CE8_4D6B_9A6A_ED1547169810"
             "InstallerClass" = "11:TRUE"
             "CustomActionData" = "8:"
             }
@@ -1145,7 +1145,7 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_FBCC3F4650BD421D83683DFCB908142D"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_55A205D6A532436FBE8F096EA2469D1D"
             {
             "SourcePath" = "8:..\\NewWindowsService\\obj\\Debug\\NewWindowsService.exe"
             "TargetName" = "8:"

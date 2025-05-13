@@ -8,5 +8,8 @@
     <Setting Name="comNumber" Type="System.String" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
+    <Setting Name="COM_PORT" Type="System.String" Scope="User">
+      <Value Profile="(Default)">COM7</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

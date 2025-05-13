@@ -9,42 +9,29 @@ namespace TerminalConf
     {
         static void Main(string[] args)
         {
-            if (args.Length != 4 || args[0] != "-r" || args[2] != "-i")
+            if (args.Length != 6 || args[0] != "-r" || args[2] != "-i" || args[4] != "-l")
             {
-                Console.WriteLine("Cách dùng: TerminalConf.exe -r <Phòng> -i <Máy số>");
+                Console.WriteLine("Cách dùng: TerminalConf.exe -r <Phòng> -i <Máy số> -l <COM_PORT>");
                 return;
             }
 
             string room = args[1];
             string index = args[3];
+            string comPort = args[5];
 
             // Bước 1: Xác định các khả năng đường dẫn
             string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string roamingAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData); // Roaming
+            string roamingAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
 
             string[] possiblePaths = new string[]
             {
                 @"C:\Windows\System32\config\systemprofile\AppData\Local\NewWindowsService",
-                //@"C:\Windows\System32\config\systemprofile\AppData\Local\LocalCenter",
                 Path.Combine(localAppData, "NewWindowsService"),
-                //Path.Combine(localAppData, "LocalCenter"),
                 @"C:\Windows\System32\config\systemprofile\AppData\Roaming\NewWindowsService",
-                //@"C:\Windows\System32\config\systemprofile\AppData\Roaming\LocalCenter",
                 Path.Combine(roamingAppData, "NewWindowsService")
-                //Path.Combine(roamingAppData, "LocalCenter")
             };
 
-            string finalConfigPath = null;
-
-            foreach (var path in possiblePaths)
-            {
-                if (Directory.Exists(path))
-                {
-                    finalConfigPath = path;
-                    break;
-                }
-            }
-
+            string finalConfigPath = possiblePaths.FirstOrDefault(Directory.Exists);
             if (string.IsNullOrEmpty(finalConfigPath))
             {
                 Console.WriteLine("Không tìm thấy thư mục chứa NewWindowsService.");
@@ -77,11 +64,11 @@ namespace TerminalConf
 
             // Bước 3: Load và chỉnh sửa XML
             XDocument doc = XDocument.Load(userConfigPath);
-
             var settings = doc.Descendants("setting").ToList();
 
             var roomSetting = settings.FirstOrDefault(x => (string)x.Attribute("name") == "roomNumber");
             var indexSetting = settings.FirstOrDefault(x => (string)x.Attribute("name") == "comNumber");
+            var comPortSetting = settings.FirstOrDefault(x => (string)x.Attribute("name") == "COM_PORT");
 
             if (roomSetting != null)
             {
@@ -103,9 +90,18 @@ namespace TerminalConf
                 Console.WriteLine("Không tìm thấy setting Index.");
             }
 
+            if (comPortSetting != null)
+            {
+                comPortSetting.Element("value").Value = comPort;
+                Console.WriteLine($"Đã cập nhật COM_PORT = {comPort}");
+            }
+            else
+            {
+                Console.WriteLine("Không tìm thấy setting COM_PORT.");
+            }
+
             // Bước 4: Save lại
             doc.Save(userConfigPath);
-
             Console.WriteLine("Đã lưu user.config thành công.");
         }
     }

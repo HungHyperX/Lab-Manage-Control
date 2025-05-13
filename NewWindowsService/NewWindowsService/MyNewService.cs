@@ -74,6 +74,7 @@ namespace NewWindowsService
             {
                 Properties.Settings.Default.roomNumber = "B1-221";
                 Properties.Settings.Default.comNumber = "24";
+                Properties.Settings.Default.COM_PORT = "COM7";
                 Properties.Settings.Default.Save();
                 log.Info("Ghi cấu hình mặc định vì user.config chưa tồn tại.");
             }
@@ -83,7 +84,8 @@ namespace NewWindowsService
             }
 
             // Khởi tạo Serial Port
-            _serialPort = new SerialPort("COM7", 115200); // Cập nhật COM port thực tế nếu khác
+            string com_port = Properties.Settings.Default.COM_PORT;
+            _serialPort = new SerialPort(com_port, 115200); // Cập nhật COM port thực tế nếu khác
             _serialPort.Encoding = Encoding.UTF8;
             _serialPort.NewLine = "\n";
 

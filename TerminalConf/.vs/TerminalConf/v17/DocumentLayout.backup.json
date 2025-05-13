@@ -28,10 +28,9 @@
               "Title": "user.config",
               "DocumentMoniker": "C:\\Users\\Tester\\AppData\\Local\\NewWindowsService\\NewWindowsService.exe_Url_mypeviermg2th0k3krrxwimjeum3n3ls\\1.0.0.0\\user.config",
               "ToolTip": "C:\\Users\\Tester\\AppData\\Local\\NewWindowsService\\NewWindowsService.exe_Url_mypeviermg2th0k3krrxwimjeum3n3ls\\1.0.0.0\\user.config",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
-              "WhenOpened": "2025-05-06T13:22:44.968Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-06T13:22:44.968Z"
             },
             {
               "$type": "Document",
@@ -41,10 +40,9 @@
               "RelativeDocumentMoniker": "..\\NewWindowsService\\NewWindowsService\\bin\\Debug\\NewWindowsService.exe.config",
               "ToolTip": "D:\\DATN\\NewWindowsService\\NewWindowsService\\bin\\Debug\\NewWindowsService.exe.config",
               "RelativeToolTip": "..\\NewWindowsService\\NewWindowsService\\bin\\Debug\\NewWindowsService.exe.config",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAAAcAAAASAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACQAAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000601|",
-              "WhenOpened": "2025-04-22T03:56:10.582Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-22T03:56:10.582Z"
             },
             {
               "$type": "Document",
@@ -54,7 +52,7 @@
               "RelativeDocumentMoniker": "TerminalConf\\Program.cs",
               "ToolTip": "D:\\DATN\\TerminalConf\\TerminalConf\\Program.cs",
               "RelativeToolTip": "TerminalConf\\Program.cs",
-              "ViewState": "AgIAAEsAAAAAAAAAAAAAwFIAAAAMAAAAAAAAAA==",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAAwAYAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-19T16:42:20.108Z",
               "EditorCaption": ""
