@@ -57,14 +57,20 @@
     .\TerminalConf.exe -r B1-206 -i 22 -l COM3
     ```
 
-  ## IV. Chạy thiết bị nhúng
-
+  ## IV. Thiết bị nhúng
+  ### 1. Cách chạy:
   - Nạp code TestBoard.ino vào thiết bị.
     ![9793fb66-fcec-43c6-b3cc-3fdcddd6eab7](https://github.com/user-attachments/assets/f2c17277-f469-4076-893b-7270438d8db7)
 
   - Giữ nút BOOT khi nạp code. Khi thấy hiện ra chứ Connecting.... thì hãy nhấn nút RST rồi thả ra, sau 1 giây thả nút BOOT ra. Rồi khi code nạp xong hãy nhất RST 1 lần. 
   - Thiết lập mặc định *ComPort* là COM7, và thiệt lập *Serial* là 115200.
   - Lưu ý: Khi đang chạy Service thì tắt ArduinoIDE và các chương trình có liên quan đến kết nối với cổng COM của thiết bị nhúng. Vì vậy trước khi nạp code, hãy dừng Terminal Service lại, rồi sau đó hãy nạp code, rồi tắt ArduinoIDE rồi mới bật lại Terminal Service lên để tránh xung đột dẫn đến không chạy được.
+
+  ### 2. Chức năng:
+  ![496622981_1047667870625057_7645876497791463438_n](https://github.com/user-attachments/assets/4626955d-183e-4614-9bee-8712fc690eb4)
+  - Nhấn SW1 hoặc SW2 để đổi thông tin muốn xem của máy
+  - Quét thẻ sinh viên qua cuộn đồng để đọc thẻ sinh viên
+
 
   
      
