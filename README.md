@@ -64,7 +64,7 @@
 
   - Giữ nút BOOT khi nạp code. Khi thấy hiện ra chứ Connecting.... thì hãy nhấn nút RST rồi thả ra, sau 1 giây thả nút BOOT ra. Rồi khi code nạp xong hãy nhất RST 1 lần. 
   - Thiết lập mặc định *ComPort* là COM7, và thiệt lập *Serial* là 115200.
-
+  - Lưu ý: Khi đang chạy Service thì tắt ArduinoIDE và các chương trình có liên quan đến kết nối với cổng COM của thiết bị nhúng. Vì vậy trước khi nạp code, hãy dừng Terminal Service lại, rồi sau đó hãy nạp code, rồi tắt ArduinoIDE rồi mới bật lại Terminal Service lên để tránh xung đột dẫn đến không chạy được.
 
   
      
