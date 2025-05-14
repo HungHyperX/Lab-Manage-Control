@@ -362,9 +362,9 @@ namespace NewWindowsService
                 process.WaitForExit();
 
                 if (output.Contains("ON"))
-                    return "Firewall is ON";
+                    return "ON";
                 else if (output.Contains("OFF"))
-                    return "Firewall is OFF";
+                    return "OFF";
             }
             catch (Exception ex)
             {

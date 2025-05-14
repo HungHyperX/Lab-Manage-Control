@@ -6,16 +6,10 @@
       <Value Profile="(Default)">test.mosquitto.org</Value>
     </Setting>
     <Setting Name="Room" Type="System.String" Scope="User">
-      <Value Profile="(Default)">B1-101</Value>
-    </Setting>
-    <Setting Name="MqttUser" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="MqttPassword" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">B1-201</Value>
     </Setting>
     <Setting Name="Computer" Type="System.String" Scope="User">
-      <Value Profile="(Default)">24</Value>
+      <Value Profile="(Default)">22</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -37,7 +37,7 @@ namespace LocalCenterForm.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("B1-101")]
+        [global::System.Configuration.DefaultSettingValueAttribute("B1-201")]
         public string Room {
             get {
                 return ((string)(this["Room"]));
@@ -49,31 +49,7 @@ namespace LocalCenterForm.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string MqttUser {
-            get {
-                return ((string)(this["MqttUser"]));
-            }
-            set {
-                this["MqttUser"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string MqttPassword {
-            get {
-                return ((string)(this["MqttPassword"]));
-            }
-            set {
-                this["MqttPassword"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("24")]
+        [global::System.Configuration.DefaultSettingValueAttribute("22")]
         public string Computer {
             get {
                 return ((string)(this["Computer"]));
