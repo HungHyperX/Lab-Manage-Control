@@ -62,6 +62,12 @@ namespace NewWindowsService
                         log.Info("Turning Firewall OFF");
                         SetFirewallState(false);
                     }
+                    else if (message.Trim().ToUpper() == "SHUTDOWN")
+                    {
+                        log.Info("Received shutdown command");
+                        ShutdownComputer();
+                    }
+
                 }
             };
         }
@@ -372,5 +378,24 @@ namespace NewWindowsService
             }
             return "Unknown";
         }
+
+        private void ShutdownComputer()
+        {
+            try
+            {
+                ProcessStartInfo psi = new ProcessStartInfo("shutdown", "/s /t 0")
+                {
+                    CreateNoWindow = true,
+                    UseShellExecute = false
+                };
+                Process.Start(psi);
+                log.Info("Shutdown command issued.");
+            }
+            catch (Exception ex)
+            {
+                log.Error("Error while trying to shutdown the computer", ex);
+            }
+        }
+
     }
 }
