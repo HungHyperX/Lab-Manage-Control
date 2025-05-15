@@ -56,6 +56,7 @@
     ```cmd
     .\TerminalConf.exe -r B1-206 -i 22 -l COM3
     ```
+  - Muốn Terminal Service ghi nhận sự thay đổi thì phải Restart lại NewWindowsService.
 
   ## IV. Thiết bị nhúng
   ### 1. Cách chạy:
