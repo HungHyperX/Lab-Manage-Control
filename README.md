@@ -44,7 +44,8 @@
   
   ![image](https://github.com/user-attachments/assets/1e8810b9-5b70-4934-be47-140e21de6626)
 
-  - Chọn *This account*, điền tên và mật khẩu người dùng hiện tại hoặc người dùng khác có trên máy. Sau đó nhấn *Apply*
+  - Chọn *This account*, điền tên và mật khẩu người dùng hiện tại hoặc người dùng khác có trên máy. Sau đó nhấn *Apply*.
+  - **Lưu ý: **, tài khoản này phải là tài khoản Local (không phải tài khoản Microsoft) và phải được cho quyền quản trị để dễ dàng điều chỉnh.
 
   ## III. Chạy TerminalConf để sửa file cấu hình của Terminal Service:
 
