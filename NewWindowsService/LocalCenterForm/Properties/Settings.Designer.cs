@@ -25,7 +25,7 @@ namespace LocalCenterForm.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("test.mosquitto.org")]
+        [global::System.Configuration.DefaultSettingValueAttribute("broker.hivemq.com")]
         public string MqttHost {
             get {
                 return ((string)(this["MqttHost"]));

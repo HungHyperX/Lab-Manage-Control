@@ -26,7 +26,7 @@ namespace LocalCenterForm
         }
 
         private string GetBrokerFromUI() =>
-            string.IsNullOrWhiteSpace(txtHost.Text) ? "test.mosquitto.org" : txtHost.Text.Trim();
+            string.IsNullOrWhiteSpace(txtHost.Text) ? "broker.hivemq.com" : txtHost.Text.Trim();
 
         private void InitializeMQTT()
         {

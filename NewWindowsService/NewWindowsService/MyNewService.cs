@@ -25,7 +25,7 @@ namespace NewWindowsService
         private IMqttClient _client;
         private IMqttClientOptions _options;
         private SerialPort _serialPort;
-        private readonly string _broker = "test.mosquitto.org";
+        private readonly string _broker = "broker.hivemq.com";//"test.mosquitto.org";
         private readonly int _port = 1883;
         private readonly string _pubTopic = "may1/thongtin";
         private readonly string _subTopic = "may1/subTerminal";

@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="MqttHost" Type="System.String" Scope="User">
-      <Value Profile="(Default)">test.mosquitto.org</Value>
+      <Value Profile="(Default)">broker.hivemq.com</Value>
     </Setting>
     <Setting Name="Room" Type="System.String" Scope="User">
       <Value Profile="(Default)">B1-201</Value>
