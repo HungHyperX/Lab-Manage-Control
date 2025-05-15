@@ -170,7 +170,7 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Tester\\.nuget\\packages\\": {},
+    "C:\\Users\\hungh\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
@@ -179,14 +179,14 @@
       "projectUniqueName": "D:\\DATN\\TerminalConf\\TerminalConf\\TerminalConf.csproj",
       "projectName": "TerminalConf",
       "projectPath": "D:\\DATN\\TerminalConf\\TerminalConf\\TerminalConf.csproj",
-      "packagesPath": "C:\\Users\\Tester\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\hungh\\.nuget\\packages\\",
       "outputPath": "D:\\DATN\\TerminalConf\\TerminalConf\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Tester\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\hungh\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],

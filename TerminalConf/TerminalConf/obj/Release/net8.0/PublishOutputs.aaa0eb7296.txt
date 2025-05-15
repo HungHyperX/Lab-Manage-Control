@@ -1,0 +1,10 @@
+D:\DATN\TerminalConf\TerminalConf\bin\Release\net8.0\publish\TerminalConf.exe
+D:\DATN\TerminalConf\TerminalConf\bin\Release\net8.0\publish\TerminalConf.dll
+D:\DATN\TerminalConf\TerminalConf\bin\Release\net8.0\publish\TerminalConf.deps.json
+D:\DATN\TerminalConf\TerminalConf\bin\Release\net8.0\publish\TerminalConf.runtimeconfig.json
+D:\DATN\TerminalConf\TerminalConf\bin\Release\net8.0\publish\TerminalConf.pdb
+D:\DATN\TerminalConf\TerminalConf\bin\Release\net8.0\publish\System.Configuration.ConfigurationManager.dll
+D:\DATN\TerminalConf\TerminalConf\bin\Release\net8.0\publish\System.Diagnostics.EventLog.dll
+D:\DATN\TerminalConf\TerminalConf\bin\Release\net8.0\publish\System.Security.Cryptography.ProtectedData.dll
+D:\DATN\TerminalConf\TerminalConf\bin\Release\net8.0\publish\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.Messages.dll
+D:\DATN\TerminalConf\TerminalConf\bin\Release\net8.0\publish\runtimes\win\lib\net8.0\System.Diagnostics.EventLog.dll

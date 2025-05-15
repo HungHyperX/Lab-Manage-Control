@@ -1,11 +1,11 @@
-﻿
-using System;
+﻿using System;
 using System.Windows.Forms;
 using MQTTnet;
 using MQTTnet.Client;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Linq;
 
 namespace LocalCenterForm
 {
@@ -15,6 +15,7 @@ namespace LocalCenterForm
         private MqttClientOptions _options;
         private readonly int _port = 1883;
         private readonly string _topic = "may1/subTerminal";
+        private readonly string _subTopic = "may1/thongtin";
         private readonly SemaphoreSlim _connectLock = new SemaphoreSlim(1, 1);
 
         public MainForm()
@@ -46,7 +47,13 @@ namespace LocalCenterForm
                     btnConnect.Enabled = false;
                     lblStatus.Text = "Connected";
                 });
-                await Task.CompletedTask;
+
+                // Sub to topic
+                await _client.SubscribeAsync(_subTopic);
+                Invoke((MethodInvoker)delegate
+                {
+                    Log($"Subscribed to {_subTopic}");
+                });
             };
 
             _client.DisconnectedAsync += async e =>
@@ -59,12 +66,25 @@ namespace LocalCenterForm
                 });
                 await AttemptReconnect();
             };
+
+            _client.ApplicationMessageReceivedAsync += e =>
+            {
+                var topic = e.ApplicationMessage.Topic;
+                var payload = Encoding.UTF8.GetString(e.ApplicationMessage.Payload?.ToArray() ?? Array.Empty<byte>());
+
+                Invoke((MethodInvoker)delegate
+                {
+                    Log($"Message received on {topic}: {payload}");
+                    txtMqttMessages.AppendText($"[{DateTime.Now:HH:mm:ss}] [{topic}] {payload}\r\n");
+                });
+
+                return Task.CompletedTask;
+            };
+
+
         }
 
-        private async Task AttemptInitialConnection()
-        {
-            await ConnectMqtt();
-        }
+        private async Task AttemptInitialConnection() => await ConnectMqtt();
 
         private async Task AttemptReconnect()
         {

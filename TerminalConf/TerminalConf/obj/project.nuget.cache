@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "+u2OzG8w8jQ=",
+  "dgSpecHash": "nt0Znl3g6xY=",
   "success": true,
   "projectFilePath": "D:\\DATN\\TerminalConf\\TerminalConf\\TerminalConf.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Tester\\.nuget\\packages\\system.configuration.configurationmanager\\9.0.4\\system.configuration.configurationmanager.9.0.4.nupkg.sha512",
-    "C:\\Users\\Tester\\.nuget\\packages\\system.diagnostics.eventlog\\9.0.4\\system.diagnostics.eventlog.9.0.4.nupkg.sha512",
-    "C:\\Users\\Tester\\.nuget\\packages\\system.security.cryptography.protecteddata\\9.0.4\\system.security.cryptography.protecteddata.9.0.4.nupkg.sha512"
+    "C:\\Users\\hungh\\.nuget\\packages\\system.configuration.configurationmanager\\9.0.4\\system.configuration.configurationmanager.9.0.4.nupkg.sha512",
+    "C:\\Users\\hungh\\.nuget\\packages\\system.diagnostics.eventlog\\9.0.4\\system.diagnostics.eventlog.9.0.4.nupkg.sha512",
+    "C:\\Users\\hungh\\.nuget\\packages\\system.security.cryptography.protecteddata\\9.0.4\\system.security.cryptography.protecteddata.9.0.4.nupkg.sha512"
   ],
   "logs": []
 }
