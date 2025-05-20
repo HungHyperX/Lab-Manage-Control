@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Linq;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace LocalCenterForm
 {
@@ -16,6 +18,7 @@ namespace LocalCenterForm
         private readonly int _port = 1883;
         private readonly string _topic = "may1/subTerminal";
         private readonly string _subTopic = "may1/thongtin";
+        private readonly string _processesTopic = "may1/processes"; // Topic cho danh sách tiến trình
         private readonly SemaphoreSlim _connectLock = new SemaphoreSlim(1, 1);
 
         public MainForm()
@@ -48,11 +51,12 @@ namespace LocalCenterForm
                     lblStatus.Text = "Connected";
                 });
 
-                // Sub to topic
-                await _client.SubscribeAsync(_subTopic);
+                // Subscribe vào các topic
+                await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(_subTopic).Build());
+                await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(_processesTopic).Build());
                 Invoke((MethodInvoker)delegate
                 {
-                    Log($"Subscribed to {_subTopic}");
+                    Log($"Subscribed to {_subTopic}, {_processesTopic}");
                 });
             };
 
@@ -74,14 +78,55 @@ namespace LocalCenterForm
 
                 Invoke((MethodInvoker)delegate
                 {
-                    Log($"Message received on {topic}: {payload}");
-                    txtMqttMessages.AppendText($"[{DateTime.Now:HH:mm:ss}] [{topic}] {payload}\r\n");
+                    if (topic == _subTopic)
+                    {
+                        Log($"Message received on {topic}: {payload}");
+                        txtMqttMessages.AppendText($"[{DateTime.Now:HH:mm:ss}] [{topic}] {payload}\r\n");
+                    }
+                    else if (topic == _processesTopic)
+                    {
+                        Log($"Processes received on {topic}: {payload}");
+                        UpdateProcessList(payload);
+                    }
                 });
 
                 return Task.CompletedTask;
             };
+        }
 
+        private void UpdateProcessList(string json)
+        {
+            try
+            {
+                // Parse JSON thành danh sách tiến trình
+                var processes = JsonConvert.DeserializeObject<List<ProcessInfo>>(json);
+                if (processes == null) return;
 
+                // Sắp xếp danh sách tiến trình theo tên (theo thứ tự bảng chữ cái)
+                processes = processes.OrderBy(p => p.Name).ToList();
+
+                // Xóa danh sách cũ
+                lvProcesses.Items.Clear();
+
+                // Thêm các tiến trình vào ListView
+                foreach (var process in processes)
+                {
+                    var item = new ListViewItem(process.Name);
+                    item.SubItems.Add(process.Id.ToString());
+                    lvProcesses.Items.Add(item);
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Error parsing processes: {ex.Message}");
+            }
+        }
+
+        // Class để ánh xạ JSON
+        private class ProcessInfo
+        {
+            public string Name { get; set; }
+            public int Id { get; set; }
         }
 
         private async Task AttemptInitialConnection() => await ConnectMqtt();

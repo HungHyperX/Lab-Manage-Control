@@ -13,6 +13,7 @@ using System.Configuration;
 using NewWindowsService.Properties;
 using System.IO;
 using System.IO.Ports;
+using System.Linq;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
@@ -29,6 +30,8 @@ namespace NewWindowsService
         private readonly int _port = 1883;
         private readonly string _pubTopic = "may1/thongtin";
         private readonly string _subTopic = "may1/subTerminal";
+        private readonly string _processesTopic = "may1/processes"; // Topic để gửi danh sách tiến trình
+        private readonly string _killProcessTopic = "may1/killProcess"; // Topic để nhận lệnh kill tiến trình
 
         public MyNewService()
         {
@@ -67,7 +70,11 @@ namespace NewWindowsService
                         log.Info("Received shutdown command");
                         ShutdownComputer();
                     }
-
+                }
+                else if (e.ApplicationMessage.Topic == _killProcessTopic && !string.IsNullOrEmpty(message))
+                {
+                    log.Info($"Received kill process command: {message}");
+                    KillProcess(message);
                 }
             };
         }
@@ -141,8 +148,10 @@ namespace NewWindowsService
                     log.Info("Connected to MQTT Broker.");
                 }
 
+                // Subscribe vào các topic
                 await _client.SubscribeAsync(new TopicFilterBuilder().WithTopic(_subTopic).Build());
-                log.Info($"Subscribed to topic: {_subTopic}");
+                await _client.SubscribeAsync(new TopicFilterBuilder().WithTopic(_killProcessTopic).Build());
+                log.Info($"Subscribed to topics: {_subTopic}, {_killProcessTopic}");
             }
             catch (Exception ex)
             {
@@ -154,6 +163,7 @@ namespace NewWindowsService
         {
             log.Info("Service is running...");
 
+            // Lấy thông tin hệ thống
             string ipAddress = GetLocalIPAddress();
             string macAddress = GetMACAddress();
             string cpuInfo = GetCPUInfo();
@@ -168,6 +178,11 @@ namespace NewWindowsService
             log.Info($"Sending data to MQTT: {message}");
 
             await SendToMQTT(message);
+
+            // Gửi danh sách tiến trình
+            string processesJson = GetRunningProcesses();
+            log.Info($"Sending processes to MQTT: {processesJson}");
+            await SendToMQTT(processesJson, _processesTopic);
 
             // Gửi qua Serial
             try
@@ -184,7 +199,7 @@ namespace NewWindowsService
             }
         }
 
-        private async Task SendToMQTT(string message)
+        private async Task SendToMQTT(string message, string topic = null)
         {
             try
             {
@@ -194,7 +209,7 @@ namespace NewWindowsService
                 }
 
                 var mqttMessage = new MqttApplicationMessageBuilder()
-                    .WithTopic(_pubTopic)
+                    .WithTopic(topic ?? _pubTopic) // Sử dụng topic mặc định nếu không chỉ định
                     .WithPayload(message)
                     .WithRetainFlag()
                     .Build();
@@ -397,5 +412,71 @@ namespace NewWindowsService
             }
         }
 
+        private string GetRunningProcesses()
+        {
+            try
+            {
+                var processes = Process.GetProcesses();
+                var processList = processes.Select(p => new
+                {
+                    Name = p.ProcessName,
+                    Id = p.Id
+                }).ToList();
+
+                string json = System.Text.Json.JsonSerializer.Serialize(processList);
+                return json;
+            }
+            catch (Exception ex)
+            {
+                log.Error("Error getting running processes", ex);
+                return "[]"; // Trả về mảng rỗng nếu có lỗi
+            }
+        }
+
+        private void KillProcess(string processInfo)
+        {
+            try
+            {
+                // Giả sử processInfo là tên tiến trình hoặc ID
+                if (int.TryParse(processInfo, out int processId))
+                {
+                    // Tắt tiến trình bằng ID
+                    var process = Process.GetProcessById(processId);
+                    if (process != null)
+                    {
+                        process.Kill();
+                        log.Info($"Process with ID {processId} terminated.");
+                    }
+                    else
+                    {
+                        log.Warn($"No process found with ID {processId}.");
+                    }
+                }
+                else
+                {
+                    // Tắt tiến trình bằng tên
+                    var processes = Process.GetProcessesByName(processInfo);
+                    if (processes.Length > 0)
+                    {
+                        foreach (var process in processes)
+                        {
+                            process.Kill();
+                            log.Info($"Process {processInfo} (ID: {process.Id}) terminated.");
+                        }
+                    }
+                    else
+                    {
+                        log.Warn($"No process found with name {processInfo}.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error($"Error terminating process {processInfo}", ex);
+            }
+        }
+
     }
+
+
 }

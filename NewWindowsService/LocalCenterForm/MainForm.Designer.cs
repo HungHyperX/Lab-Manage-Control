@@ -15,6 +15,7 @@
         private System.Windows.Forms.TextBox txtLog;
         private System.Windows.Forms.TextBox txtMqttMessages;
         private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.ListView lvProcesses;
 
         protected override void Dispose(bool disposing)
         {
@@ -39,6 +40,7 @@
             this.txtLog = new System.Windows.Forms.TextBox();
             this.txtMqttMessages = new System.Windows.Forms.TextBox();
             this.lblStatus = new System.Windows.Forms.Label();
+            this.lvProcesses = new System.Windows.Forms.ListView();
             this.SuspendLayout();
             // 
             // txtHost
@@ -144,9 +146,21 @@
             this.lblStatus.TabIndex = 11;
             this.lblStatus.Text = "Disconnected";
             // 
+            // lvProcesses
+            // 
+            this.lvProcesses.Location = new System.Drawing.Point(640, 12);
+            this.lvProcesses.Name = "lvProcesses";
+            this.lvProcesses.Size = new System.Drawing.Size(300, 218);
+            this.lvProcesses.TabIndex = 12;
+            this.lvProcesses.View = System.Windows.Forms.View.Details;
+            this.lvProcesses.FullRowSelect = true;
+            this.lvProcesses.GridLines = true;
+            this.lvProcesses.Columns.Add("Process Name", 150);
+            this.lvProcesses.Columns.Add("Process ID", 100);
+            // 
             // MainForm
             // 
-            this.ClientSize = new System.Drawing.Size(650, 270);
+            this.ClientSize = new System.Drawing.Size(950, 270);
             this.Controls.Add(this.txtHost);
             this.Controls.Add(this.txtRoom);
             this.Controls.Add(this.txtComputer);
@@ -159,11 +173,11 @@
             this.Controls.Add(this.txtLog);
             this.Controls.Add(this.txtMqttMessages);
             this.Controls.Add(this.lblStatus);
+            this.Controls.Add(this.lvProcesses);
             this.Name = "MainForm";
             this.Text = "Local Center";
             this.ResumeLayout(false);
             this.PerformLayout();
-
         }
     }
 }
