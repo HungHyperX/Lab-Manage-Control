@@ -34,7 +34,7 @@
   Mở NewWindowsService\TerminalService-Setup\Debug. Nhấp vào **setup.exe**.
   ![image](https://github.com/user-attachments/assets/de210a4a-c9af-4fd5-b535-2ad3c6654c92)
 
-  ## II. Chạy Terminal Service:
+  ## II. Chạy Terminal Service (được chạy trên các máy con trong phòng máy):
 
   - Cách chạy: (Hướng dẫn ở trên)
   - Xem Terminal Service (Hướng dẫn ở trên)
@@ -72,6 +72,13 @@
   ![496622981_1047667870625057_7645876497791463438_n](https://github.com/user-attachments/assets/4626955d-183e-4614-9bee-8712fc690eb4)
   - Nhấn SW1 hoặc SW2 để đổi thông tin muốn xem của máy
   - Quét thẻ sinh viên qua cuộn đồng để đọc thẻ sinh viên
+
+  ## V. Chạy LocalCenterForm (chạy trên máy trạm để theo dõi các máy con)
+  ### 1. Cách chạy:
+  - Chạy LocalCenterForm.exe
+  ![image](https://github.com/user-attachments/assets/ba550a6b-9b68-4a94-825d-d7eace653b96)
+
+  
 
 
   
