@@ -16,17 +16,36 @@ namespace LocalCenterForm
         private IMqttClient _client;
         private MqttClientOptions _options;
         private readonly int _port = 1883;
-        private readonly string _topic = "may1/subTerminal";
-        private readonly string _subTopic = "may1/thongtin";
-        private readonly string _processesTopic = "may1/processes"; // Topic cho danh sách tiến trình
+        private string _topic;
+        private string _subTopic;
+        private string _processesTopic;
+        private string _studentTagTopic;
         private readonly SemaphoreSlim _connectLock = new SemaphoreSlim(1, 1);
 
         public MainForm()
         {
             InitializeComponent();
             LoadSettings();
+            UpdateCurrentRoomAndComputerLabels();
+            InitializeTopics();
             InitializeMQTT();
             _ = AttemptInitialConnection();
+        }
+
+        private void InitializeTopics()
+        {
+            string roomNumber = Properties.Settings.Default.Room;
+            string comNumber = Properties.Settings.Default.Computer;
+            _topic = $"{roomNumber}/{comNumber}/subTerminal";
+            _subTopic = $"{roomNumber}/{comNumber}/thongtin";
+            _processesTopic = $"{roomNumber}/{comNumber}/processes";
+            _studentTagTopic = $"{roomNumber}/{comNumber}/studentTagId";
+        }
+
+        private void UpdateCurrentRoomAndComputerLabels()
+        {
+            lblCurrentRoom.Text = $"Current Room: {Properties.Settings.Default.Room}";
+            lblCurrentComputer.Text = $"Current Computer: {Properties.Settings.Default.Computer}";
         }
 
         private string GetBrokerFromUI() =>
@@ -51,12 +70,13 @@ namespace LocalCenterForm
                     lblStatus.Text = "Connected";
                 });
 
-                // Subscribe vào các topic
                 await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(_subTopic).Build());
                 await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(_processesTopic).Build());
+                await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(_studentTagTopic).Build());
+
                 Invoke((MethodInvoker)delegate
                 {
-                    Log($"Subscribed to {_subTopic}, {_processesTopic}");
+                    Log($"Subscribed to {_subTopic}, {_processesTopic}, {_studentTagTopic}");
                 });
             };
 
@@ -81,12 +101,17 @@ namespace LocalCenterForm
                     if (topic == _subTopic)
                     {
                         Log($"Message received on {topic}: {payload}");
-                        txtMqttMessages.AppendText($"[{DateTime.Now:HH:mm:ss}] [{topic}] {payload}\r\n");
+                        //txtMqttMessages.AppendText($"[{DateTime.Now:HH:mm:ss}] [{topic}] {payload}\r\n");
                     }
                     else if (topic == _processesTopic)
                     {
                         Log($"Processes received on {topic}: {payload}");
                         UpdateProcessList(payload);
+                    }
+                    else if (topic == _studentTagTopic)
+                    {
+                        Log($"RFID Tag received on {topic}: {payload}");
+                        UpdateRfidDisplay(payload);
                     }
                 });
 
@@ -98,17 +123,12 @@ namespace LocalCenterForm
         {
             try
             {
-                // Parse JSON thành danh sách tiến trình
                 var processes = JsonConvert.DeserializeObject<List<ProcessInfo>>(json);
                 if (processes == null) return;
 
-                // Sắp xếp danh sách tiến trình theo tên (theo thứ tự bảng chữ cái)
                 processes = processes.OrderBy(p => p.Name).ToList();
-
-                // Xóa danh sách cũ
                 lvProcesses.Items.Clear();
 
-                // Thêm các tiến trình vào ListView
                 foreach (var process in processes)
                 {
                     var item = new ListViewItem(process.Name);
@@ -122,7 +142,27 @@ namespace LocalCenterForm
             }
         }
 
-        // Class để ánh xạ JSON
+        private void UpdateRfidDisplay(string json)
+        {
+            try
+            {
+                var jsonObj = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+                if (jsonObj != null && jsonObj.ContainsKey("rfid"))
+                {
+                    var rfidValue = jsonObj["rfid"];
+                    txtRfid.Text = rfidValue;
+                }
+                else
+                {
+                    Log("Invalid RFID JSON received");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Error parsing RFID JSON: {ex.Message}");
+            }
+        }
+
         private class ProcessInfo
         {
             public string Name { get; set; }
@@ -199,13 +239,43 @@ namespace LocalCenterForm
         private async void btnShutdown_Click(object sender, EventArgs e) => await PublishCommand("shutdown");
         private async void btnLightOn_Click(object sender, EventArgs e) => await PublishCommand("light_on");
 
-        private void SaveSettings_Click(object sender, EventArgs e)
+        private async void btnUpdateTopics_Click(object sender, EventArgs e)
         {
-            Properties.Settings.Default.MqttHost = txtHost.Text.Trim();
             Properties.Settings.Default.Room = txtRoom.Text.Trim();
             Properties.Settings.Default.Computer = txtComputer.Text.Trim();
             Properties.Settings.Default.Save();
-            Log("Settings saved");
+            Log("Room and Computer settings saved");
+
+            UpdateCurrentRoomAndComputerLabels();
+            InitializeTopics();
+            Log($"Updated topics: {_subTopic}, {_processesTopic}, {_studentTagTopic}");
+
+            if (_client.IsConnected)
+            {
+                try
+                {
+                    await _client.UnsubscribeAsync(_subTopic);
+                    await _client.UnsubscribeAsync(_processesTopic);
+                    await _client.UnsubscribeAsync(_studentTagTopic);
+                    Log($"Unsubscribed from old topics");
+
+                    await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(_subTopic).Build());
+                    await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(_processesTopic).Build());
+                    await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(_studentTagTopic).Build());
+                    Log($"Subscribed to new topics: {_subTopic}, {_processesTopic}, {_studentTagTopic}");
+                }
+                catch (Exception ex)
+                {
+                    Log($"Error updating subscriptions: {ex.Message}");
+                }
+            }
+        }
+
+        private void SaveSettings_Click(object sender, EventArgs e)
+        {
+            Properties.Settings.Default.MqttHost = txtHost.Text.Trim();
+            Properties.Settings.Default.Save();
+            Log("MQTT Host settings saved");
         }
 
         private void LoadSettings()

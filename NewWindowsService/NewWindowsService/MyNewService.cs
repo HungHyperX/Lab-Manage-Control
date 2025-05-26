@@ -13,7 +13,10 @@ using System.Configuration;
 using NewWindowsService.Properties;
 using System.IO;
 using System.IO.Ports;
+using Newtonsoft.Json;
 using System.Linq;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json.Linq;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
 
@@ -26,12 +29,13 @@ namespace NewWindowsService
         private IMqttClient _client;
         private IMqttClientOptions _options;
         private SerialPort _serialPort;
-        private readonly string _broker = "broker.hivemq.com";//"test.mosquitto.org";
+        private readonly string _broker = "broker.hivemq.com";
         private readonly int _port = 1883;
-        private readonly string _pubTopic = "may1/thongtin";
-        private readonly string _subTopic = "may1/subTerminal";
-        private readonly string _processesTopic = "may1/processes"; // Topic để gửi danh sách tiến trình
-        private readonly string _killProcessTopic = "may1/killProcess"; // Topic để nhận lệnh kill tiến trình
+        private string _pubTopic; // Topic động: {roomNumber}/{comNumber}/thongtin
+        private string _subTopic; // Topic động: {roomNumber}/{comNumber}/subTerminal
+        private string _processesTopic; // Topic động: {roomNumber}/{comNumber}/processes
+        private string _killProcessTopic; // Topic động: {roomNumber}/{comNumber}/killProcess
+        private string _studentTagTopic; // topic gửi mã thẻ: {roomNumber}/{comNumber}/studentTagId 
 
         public MyNewService()
         {
@@ -96,11 +100,22 @@ namespace NewWindowsService
                 log.Info($"Đọc cấu hình từ user.config: Room = {Properties.Settings.Default.roomNumber}, Com = {Properties.Settings.Default.comNumber}");
             }
 
+            // Khởi tạo các topic động
+            string roomNumber = Properties.Settings.Default.roomNumber;
+            string comNumber = Properties.Settings.Default.comNumber;
+            _pubTopic = $"{roomNumber}/{comNumber}/thongtin";
+            _subTopic = $"{roomNumber}/{comNumber}/subTerminal";
+            _processesTopic = $"{roomNumber}/{comNumber}/processes";
+            _killProcessTopic = $"{roomNumber}/{comNumber}/killProcess";
+            _studentTagTopic = $"{roomNumber}/{comNumber}/studentTagId";
+
             // Khởi tạo Serial Port
             string com_port = Properties.Settings.Default.COM_PORT;
-            _serialPort = new SerialPort(com_port, 115200); // Cập nhật COM port thực tế nếu khác
+            _serialPort = new SerialPort(com_port, 115200);
             _serialPort.Encoding = Encoding.UTF8;
             _serialPort.NewLine = "\n";
+            
+
 
             try
             {
@@ -112,6 +127,8 @@ namespace NewWindowsService
             {
                 log.Error("Error opening serial port", ex);
             }
+
+            _serialPort.DataReceived += SerialPort_DataReceived;
 
             timer = new System.Timers.Timer(20000); // 20 giây
             timer.Elapsed += async (sender, e) => await OnElapsedTime();
@@ -148,7 +165,6 @@ namespace NewWindowsService
                     log.Info("Connected to MQTT Broker.");
                 }
 
-                // Subscribe vào các topic
                 await _client.SubscribeAsync(new TopicFilterBuilder().WithTopic(_subTopic).Build());
                 await _client.SubscribeAsync(new TopicFilterBuilder().WithTopic(_killProcessTopic).Build());
                 log.Info($"Subscribed to topics: {_subTopic}, {_killProcessTopic}");
@@ -163,7 +179,6 @@ namespace NewWindowsService
         {
             log.Info("Service is running...");
 
-            // Lấy thông tin hệ thống
             string ipAddress = GetLocalIPAddress();
             string macAddress = GetMACAddress();
             string cpuInfo = GetCPUInfo();
@@ -209,7 +224,7 @@ namespace NewWindowsService
                 }
 
                 var mqttMessage = new MqttApplicationMessageBuilder()
-                    .WithTopic(topic ?? _pubTopic) // Sử dụng topic mặc định nếu không chỉ định
+                    .WithTopic(topic ?? _pubTopic)
                     .WithPayload(message)
                     .WithRetainFlag()
                     .Build();
@@ -222,12 +237,73 @@ namespace NewWindowsService
             }
         }
 
+        private string GetRunningProcesses()
+        {
+            try
+            {
+                var processes = Process.GetProcesses();
+                var processList = processes.Select(p => new
+                {
+                    Name = p.ProcessName,
+                    Id = p.Id
+                }).ToList();
+
+                string json = JsonConvert.SerializeObject(processList);
+                return json;
+            }
+            catch (Exception ex)
+            {
+                log.Error("Error getting running processes", ex);
+                return "[]";
+            }
+        }
+
+        private void KillProcess(string processInfo)
+        {
+            try
+            {
+                if (int.TryParse(processInfo, out int processId))
+                {
+                    var process = Process.GetProcessById(processId);
+                    if (process != null)
+                    {
+                        process.Kill();
+                        log.Info($"Process with ID {processId} terminated.");
+                    }
+                    else
+                    {
+                        log.Warn($"No process found with ID {processId}.");
+                    }
+                }
+                else
+                {
+                    var processes = Process.GetProcessesByName(processInfo);
+                    if (processes.Length > 0)
+                    {
+                        foreach (var process in processes)
+                        {
+                            process.Kill();
+                            log.Info($"Process {processInfo} (ID: {process.Id}) terminated.");
+                        }
+                    }
+                    else
+                    {
+                        log.Warn($"No process found with name {processInfo}.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error($"Error terminating process {processInfo}", ex);
+            }
+        }
+
         private void SetFirewallState(bool enable)
         {
             try
             {
                 string command = enable ? "netsh advfirewall set allprofiles state on"
-                                        : "netsh advfirewall set allprofiles state off";
+                                       : "netsh advfirewall set allprofiles state off";
 
                 ProcessStartInfo psi = new ProcessStartInfo
                 {
@@ -412,71 +488,75 @@ namespace NewWindowsService
             }
         }
 
-        private string GetRunningProcesses()
+        private async void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             try
             {
-                var processes = Process.GetProcesses();
-                var processList = processes.Select(p => new
-                {
-                    Name = p.ProcessName,
-                    Id = p.Id
-                }).ToList();
+                string data = _serialPort.ReadLine().Trim();
+                log.Info($"Received data from Serial: {data}");
 
-                string json = System.Text.Json.JsonSerializer.Serialize(processList);
-                return json;
-            }
-            catch (Exception ex)
-            {
-                log.Error("Error getting running processes", ex);
-                return "[]"; // Trả về mảng rỗng nếu có lỗi
-            }
-        }
-
-        private void KillProcess(string processInfo)
-        {
-            try
-            {
-                // Giả sử processInfo là tên tiến trình hoặc ID
-                if (int.TryParse(processInfo, out int processId))
+                // Kiểm tra xem dữ liệu có phải JSON không
+                if (IsValidJson(data))
                 {
-                    // Tắt tiến trình bằng ID
-                    var process = Process.GetProcessById(processId);
-                    if (process != null)
+                    var json = JsonConvert.DeserializeObject<dynamic>(data);
+                    if (json.rfid != null)
                     {
-                        process.Kill();
-                        log.Info($"Process with ID {processId} terminated.");
+                        string rfid = json.rfid.ToString();
+                        log.Info($"Valid RFID JSON received: {rfid}");
+
+                        // Tạo topic studentTagId
+                        string roomNumber = Properties.Settings.Default.roomNumber;
+                        string comNumber = Properties.Settings.Default.comNumber;
+                        string studentTagIdTopic = $"{roomNumber}/{comNumber}/studentTagId";
+
+                        // Gửi lên MQTT
+                        await SendToMQTT(data, studentTagIdTopic);
+                        log.Info($"Sent RFID data to MQTT topic {studentTagIdTopic}: {data}");
                     }
                     else
                     {
-                        log.Warn($"No process found with ID {processId}.");
+                        log.Warn("JSON received does not contain 'rfid' key.");
                     }
                 }
                 else
                 {
-                    // Tắt tiến trình bằng tên
-                    var processes = Process.GetProcessesByName(processInfo);
-                    if (processes.Length > 0)
-                    {
-                        foreach (var process in processes)
-                        {
-                            process.Kill();
-                            log.Info($"Process {processInfo} (ID: {process.Id}) terminated.");
-                        }
-                    }
-                    else
-                    {
-                        log.Warn($"No process found with name {processInfo}.");
-                    }
+                    log.Warn("Received data is not valid JSON.");
                 }
             }
             catch (Exception ex)
             {
-                log.Error($"Error terminating process {processInfo}", ex);
+                log.Error("Error processing Serial data", ex);
             }
         }
 
+        private bool IsValidJson(string strInput)
+        {
+            strInput = strInput.Trim();
+            if ((strInput.StartsWith("{") && strInput.EndsWith("}")) || // object
+                (strInput.StartsWith("[") && strInput.EndsWith("]")))   // array
+            {
+                try
+                {
+                    var obj = JToken.Parse(strInput);
+                    return true;
+                }
+                catch (JsonReaderException jex)
+                {
+                    log.Warn("Invalid JSON: " + jex.Message);
+                    return false;
+                }
+                catch (Exception ex)
+                {
+                    log.Error("Error in IsValidJson", ex);
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
     }
-
-
 }

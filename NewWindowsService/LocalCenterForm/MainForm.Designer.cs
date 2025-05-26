@@ -1,4 +1,7 @@
-﻿namespace LocalCenterForm
+﻿// Đoạn code sửa đổi trong Designer.cs
+using System.Windows.Forms;
+
+namespace LocalCenterForm
 {
     partial class MainForm
     {
@@ -16,6 +19,13 @@
         private System.Windows.Forms.TextBox txtMqttMessages;
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.ListView lvProcesses;
+        private System.Windows.Forms.Button btnUpdateTopics;
+        private System.Windows.Forms.Label lblCurrentRoom;
+        private System.Windows.Forms.Label lblCurrentComputer;
+        private System.Windows.Forms.TextBox txtRfid; // TextBox mới để hiển thị mã thẻ RFID
+
+        private System.Windows.Forms.ColumnHeader colName;
+        private System.Windows.Forms.ColumnHeader colId;
 
         protected override void Dispose(bool disposing)
         {
@@ -41,6 +51,10 @@
             this.txtMqttMessages = new System.Windows.Forms.TextBox();
             this.lblStatus = new System.Windows.Forms.Label();
             this.lvProcesses = new System.Windows.Forms.ListView();
+            this.btnUpdateTopics = new System.Windows.Forms.Button();
+            this.lblCurrentRoom = new System.Windows.Forms.Label();
+            this.lblCurrentComputer = new System.Windows.Forms.Label();
+            this.txtRfid = new System.Windows.Forms.TextBox(); // Khởi tạo TextBox mới
             this.SuspendLayout();
             // 
             // txtHost
@@ -75,7 +89,7 @@
             // 
             // btnEnableFirewall
             // 
-            this.btnEnableFirewall.Location = new System.Drawing.Point(12, 119);
+            this.btnEnableFirewall.Location = new System.Drawing.Point(12, 148);
             this.btnEnableFirewall.Name = "btnEnableFirewall";
             this.btnEnableFirewall.Size = new System.Drawing.Size(95, 23);
             this.btnEnableFirewall.TabIndex = 4;
@@ -84,7 +98,7 @@
             // 
             // btnDisableFirewall
             // 
-            this.btnDisableFirewall.Location = new System.Drawing.Point(117, 119);
+            this.btnDisableFirewall.Location = new System.Drawing.Point(113, 148);
             this.btnDisableFirewall.Name = "btnDisableFirewall";
             this.btnDisableFirewall.Size = new System.Drawing.Size(95, 23);
             this.btnDisableFirewall.TabIndex = 5;
@@ -93,7 +107,7 @@
             // 
             // btnShutdown
             // 
-            this.btnShutdown.Location = new System.Drawing.Point(12, 148);
+            this.btnShutdown.Location = new System.Drawing.Point(12, 177);
             this.btnShutdown.Name = "btnShutdown";
             this.btnShutdown.Size = new System.Drawing.Size(200, 23);
             this.btnShutdown.TabIndex = 6;
@@ -102,7 +116,7 @@
             // 
             // btnLightOn
             // 
-            this.btnLightOn.Location = new System.Drawing.Point(12, 177);
+            this.btnLightOn.Location = new System.Drawing.Point(12, 206);
             this.btnLightOn.Name = "btnLightOn";
             this.btnLightOn.Size = new System.Drawing.Size(200, 23);
             this.btnLightOn.TabIndex = 7;
@@ -111,7 +125,7 @@
             // 
             // btnSaveSettings
             // 
-            this.btnSaveSettings.Location = new System.Drawing.Point(12, 206);
+            this.btnSaveSettings.Location = new System.Drawing.Point(12, 235);
             this.btnSaveSettings.Name = "btnSaveSettings";
             this.btnSaveSettings.Size = new System.Drawing.Size(200, 23);
             this.btnSaveSettings.TabIndex = 8;
@@ -120,12 +134,12 @@
             // 
             // txtLog
             // 
-            this.txtLog.Location = new System.Drawing.Point(230, 119);
+            this.txtLog.Location = new System.Drawing.Point(230, 92);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtLog.Size = new System.Drawing.Size(400, 110);
+            this.txtLog.Size = new System.Drawing.Size(400, 137);
             this.txtLog.TabIndex = 9;
             // 
             // txtMqttMessages
@@ -135,12 +149,12 @@
             this.txtMqttMessages.Name = "txtMqttMessages";
             this.txtMqttMessages.ReadOnly = true;
             this.txtMqttMessages.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtMqttMessages.Size = new System.Drawing.Size(400, 100);
+            this.txtMqttMessages.Size = new System.Drawing.Size(400, 74);
             this.txtMqttMessages.TabIndex = 10;
             // 
             // lblStatus
             // 
-            this.lblStatus.Location = new System.Drawing.Point(12, 235);
+            this.lblStatus.Location = new System.Drawing.Point(12, 261);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(200, 23);
             this.lblStatus.TabIndex = 11;
@@ -148,19 +162,55 @@
             // 
             // lvProcesses
             // 
+            this.lvProcesses.FullRowSelect = true;
+            this.lvProcesses.GridLines = true;
+            this.lvProcesses.HideSelection = false;
             this.lvProcesses.Location = new System.Drawing.Point(640, 12);
             this.lvProcesses.Name = "lvProcesses";
             this.lvProcesses.Size = new System.Drawing.Size(300, 218);
             this.lvProcesses.TabIndex = 12;
+            this.lvProcesses.UseCompatibleStateImageBehavior = false;
             this.lvProcesses.View = System.Windows.Forms.View.Details;
-            this.lvProcesses.FullRowSelect = true;
-            this.lvProcesses.GridLines = true;
-            this.lvProcesses.Columns.Add("Process Name", 150);
-            this.lvProcesses.Columns.Add("Process ID", 100);
+            this.lvProcesses.Columns.Add("Process Name", 250, HorizontalAlignment.Left);
+            this.lvProcesses.Columns.Add("PID", 100, HorizontalAlignment.Left);
+            // 
+            // btnUpdateTopics
+            // 
+            this.btnUpdateTopics.Location = new System.Drawing.Point(12, 119);
+            this.btnUpdateTopics.Name = "btnUpdateTopics";
+            this.btnUpdateTopics.Size = new System.Drawing.Size(200, 23);
+            this.btnUpdateTopics.TabIndex = 13;
+            this.btnUpdateTopics.Text = "Update Topics";
+            this.btnUpdateTopics.Click += new System.EventHandler(this.btnUpdateTopics_Click);
+            // 
+            // lblCurrentRoom
+            // 
+            this.lblCurrentRoom.Location = new System.Drawing.Point(230, 235);
+            this.lblCurrentRoom.Name = "lblCurrentRoom";
+            this.lblCurrentRoom.Size = new System.Drawing.Size(200, 23);
+            this.lblCurrentRoom.TabIndex = 14;
+            this.lblCurrentRoom.Text = "Current Room: None";
+            // 
+            // lblCurrentComputer
+            // 
+            this.lblCurrentComputer.Location = new System.Drawing.Point(230, 261);
+            this.lblCurrentComputer.Name = "lblCurrentComputer";
+            this.lblCurrentComputer.Size = new System.Drawing.Size(200, 23);
+            this.lblCurrentComputer.TabIndex = 15;
+            this.lblCurrentComputer.Text = "Current Computer: None";
+            // 
+            // txtRfid
+            // 
+            this.txtRfid.Location = new System.Drawing.Point(640, 240);
+            this.txtRfid.Name = "txtRfid";
+            this.txtRfid.ReadOnly = true;
+            this.txtRfid.Size = new System.Drawing.Size(300, 22);
+            this.txtRfid.TabIndex = 16;
+            this.txtRfid.Text = "RFID Tag ID here";
             // 
             // MainForm
             // 
-            this.ClientSize = new System.Drawing.Size(950, 270);
+            this.ClientSize = new System.Drawing.Size(950, 290);
             this.Controls.Add(this.txtHost);
             this.Controls.Add(this.txtRoom);
             this.Controls.Add(this.txtComputer);
@@ -174,10 +224,15 @@
             this.Controls.Add(this.txtMqttMessages);
             this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.lvProcesses);
+            this.Controls.Add(this.btnUpdateTopics);
+            this.Controls.Add(this.lblCurrentRoom);
+            this.Controls.Add(this.lblCurrentComputer);
+            this.Controls.Add(this.txtRfid); // Thêm vào giao diện
             this.Name = "MainForm";
             this.Text = "Local Center";
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
     }
 }

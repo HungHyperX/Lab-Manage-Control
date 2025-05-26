@@ -79,3 +79,5 @@ D:\DATN\NewWindowsService\NewWindowsService\bin\Debug\System.Text.Encodings.Web.
 D:\DATN\NewWindowsService\NewWindowsService\bin\Debug\System.Text.Json.xml
 D:\DATN\NewWindowsService\NewWindowsService\bin\Debug\System.Threading.Tasks.Extensions.xml
 D:\DATN\NewWindowsService\NewWindowsService\bin\Debug\System.ValueTuple.xml
+D:\DATN\NewWindowsService\NewWindowsService\bin\Debug\Newtonsoft.Json.dll
+D:\DATN\NewWindowsService\NewWindowsService\bin\Debug\Newtonsoft.Json.xml
