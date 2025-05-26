@@ -115,8 +115,18 @@ void loop() {
   // Đọc RFID
   if (rdm6300.get_new_tag_id()) {
     currentTagID = String(rdm6300.get_tag_id(), HEX);
-    Serial.print("RFID tag: ");
-    Serial.println(currentTagID);
+    // Serial.print("RFID tag: ");
+    // Serial.println(currentTagID);
+
+    StaticJsonDocument<128> doc;
+    doc["rfid"] = currentTagID;
+
+    String jsonStr;
+    serializeJson(doc, jsonStr);
+
+    Serial.println(jsonStr); // Gửi JSON qua Serial
+
+
     beep(); // Bíp khi có thẻ mới
     displayKeyValue(); // Cập nhật OLED
   }
