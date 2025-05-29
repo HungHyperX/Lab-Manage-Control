@@ -5,7 +5,7 @@ VisualStudioVersion = 17.13.35828.75
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TerminalConf", "TerminalConf\TerminalConf.csproj", "{24A11CE8-EA46-4C74-AAFC-6D4F45EA19A3}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "TerminalConf-Setup", "TerminalCof-Setup\TerminalCof-Setup.vdproj", "{2C908E57-22D2-9030-2903-F616DF0DCE96}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "TerminalConf-Setup", "TerminalConf-Setup\TerminalConf-Setup.vdproj", "{0DF69F4B-2998-E721-C1E8-212CE5C4E030}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,8 +17,8 @@ Global
 		{24A11CE8-EA46-4C74-AAFC-6D4F45EA19A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24A11CE8-EA46-4C74-AAFC-6D4F45EA19A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24A11CE8-EA46-4C74-AAFC-6D4F45EA19A3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2C908E57-22D2-9030-2903-F616DF0DCE96}.Debug|Any CPU.ActiveCfg = Debug
-		{2C908E57-22D2-9030-2903-F616DF0DCE96}.Release|Any CPU.ActiveCfg = Release
+		{0DF69F4B-2998-E721-C1E8-212CE5C4E030}.Debug|Any CPU.ActiveCfg = Debug
+		{0DF69F4B-2998-E721-C1E8-212CE5C4E030}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

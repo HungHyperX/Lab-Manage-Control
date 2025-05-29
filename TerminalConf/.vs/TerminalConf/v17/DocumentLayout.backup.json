@@ -24,24 +24,19 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "TerminalConf",
+              "Title": "TerminalConf.csproj",
               "DocumentMoniker": "D:\\DATN\\TerminalConf\\TerminalConf\\TerminalConf.csproj",
               "RelativeDocumentMoniker": "TerminalConf\\TerminalConf.csproj",
               "ToolTip": "D:\\DATN\\TerminalConf\\TerminalConf\\TerminalConf.csproj",
               "RelativeToolTip": "TerminalConf\\TerminalConf.csproj",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2025-05-15T14:35:58.435Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{269a02dc-6af8-11d3-bdc4-00c04f688e50}"
+              "WhenOpened": "2025-05-15T14:35:58.435Z"
             },
             {
               "$type": "Document",
@@ -73,10 +68,14 @@
               "RelativeDocumentMoniker": "TerminalConf\\Program.cs",
               "ToolTip": "D:\\DATN\\TerminalConf\\TerminalConf\\Program.cs",
               "RelativeToolTip": "TerminalConf\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAASAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-19T16:42:20.108Z",
               "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{269a02dc-6af8-11d3-bdc4-00c04f688e50}"
             }
           ]
         }
