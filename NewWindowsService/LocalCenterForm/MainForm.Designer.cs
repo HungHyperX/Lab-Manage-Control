@@ -23,6 +23,7 @@ namespace LocalCenterForm
         private System.Windows.Forms.Label lblCurrentRoom;
         private System.Windows.Forms.Label lblCurrentComputer;
         private System.Windows.Forms.TextBox txtRfid; // TextBox mới để hiển thị mã thẻ RFID
+        private System.Windows.Forms.Button btnKillProcess;
 
         private System.Windows.Forms.ColumnHeader colName;
         private System.Windows.Forms.ColumnHeader colId;
@@ -55,6 +56,8 @@ namespace LocalCenterForm
             this.lblCurrentRoom = new System.Windows.Forms.Label();
             this.lblCurrentComputer = new System.Windows.Forms.Label();
             this.txtRfid = new System.Windows.Forms.TextBox(); // Khởi tạo TextBox mới
+            this.btnKillProcess = new System.Windows.Forms.Button();
+
             this.SuspendLayout();
             // 
             // txtHost
@@ -118,7 +121,7 @@ namespace LocalCenterForm
             // 
             this.btnLightOn.Location = new System.Drawing.Point(12, 206);
             this.btnLightOn.Name = "btnLightOn";
-            this.btnLightOn.Size = new System.Drawing.Size(200, 23);
+            this.btnLightOn.Size = new System.Drawing.Size(95, 23);
             this.btnLightOn.TabIndex = 7;
             this.btnLightOn.Text = "Light On";
             this.btnLightOn.Click += new System.EventHandler(this.btnLightOn_Click);
@@ -207,6 +210,16 @@ namespace LocalCenterForm
             this.txtRfid.Size = new System.Drawing.Size(300, 22);
             this.txtRfid.TabIndex = 16;
             this.txtRfid.Text = "RFID Tag ID here";
+            // 
+            // btnKillProcess
+            // 
+            //this.btnKillProcess = new System.Windows.Forms.Button();
+            this.btnKillProcess.Text = "Kill Process";
+            this.btnKillProcess.Location = new System.Drawing.Point(113, 206); // vị trí tuỳ chỉnh
+            this.btnKillProcess.Size = new System.Drawing.Size(95, 23);
+            this.btnKillProcess.Click += new System.EventHandler(this.btnKillProcess_Click);
+            this.Controls.Add(this.btnKillProcess);
+
             // 
             // MainForm
             // 

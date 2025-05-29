@@ -20,6 +20,8 @@ namespace LocalCenterForm
         private string _subTopic;
         private string _processesTopic;
         private string _studentTagTopic;
+        private string _killProcessTopic;
+
         private readonly SemaphoreSlim _connectLock = new SemaphoreSlim(1, 1);
 
         public MainForm()
@@ -40,6 +42,7 @@ namespace LocalCenterForm
             _subTopic = $"{roomNumber}/{comNumber}/thongtin";
             _processesTopic = $"{roomNumber}/{comNumber}/processes";
             _studentTagTopic = $"{roomNumber}/{comNumber}/studentTagId";
+            _killProcessTopic = $"{roomNumber}/{comNumber}/killProcess";
         }
 
         private void UpdateCurrentRoomAndComputerLabels()
@@ -238,6 +241,47 @@ namespace LocalCenterForm
         private async void btnDisableFirewall_Click(object sender, EventArgs e) => await PublishCommand("OFF");
         private async void btnShutdown_Click(object sender, EventArgs e) => await PublishCommand("shutdown");
         private async void btnLightOn_Click(object sender, EventArgs e) => await PublishCommand("light_on");
+
+        private async void btnKillProcess_Click(object sender, EventArgs e)
+        {
+            if (lvProcesses.SelectedItems.Count == 0)
+            {
+                MessageBox.Show("Please select a process to kill.", "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var selectedItem = lvProcesses.SelectedItems[0];
+            var processId = selectedItem.SubItems[1].Text; // ID process ở cột thứ 2
+
+            try
+            {
+                if (!_client.IsConnected)
+                {
+                    Log("Not connected to broker. Attempting to reconnect...");
+                    await ConnectMqtt();
+                }
+
+                if (_client.IsConnected)
+                {
+                    var message = new MqttApplicationMessageBuilder()
+                        .WithTopic(_killProcessTopic)
+                        .WithPayload(Encoding.UTF8.GetBytes(processId))
+                        .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
+                        .Build();
+
+                    await _client.PublishAsync(message);
+                    Log($"Sent kill process command for Process ID: {processId} to topic: {_killProcessTopic}");
+                }
+                else
+                {
+                    Log("Failed to send kill process command: Not connected to broker");
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Error sending kill process command: {ex.Message}");
+            }
+        }
 
         private async void btnUpdateTopics_Click(object sender, EventArgs e)
         {
