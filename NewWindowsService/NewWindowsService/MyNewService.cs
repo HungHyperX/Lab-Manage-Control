@@ -175,10 +175,57 @@ namespace NewWindowsService
             }
         }
 
+        //private async Task OnElapsedTime()
+        //{
+        //    log.Info("Service is running...");
+
+        //    string ipAddress = GetLocalIPAddress();
+        //    string macAddress = GetMACAddress();
+        //    string cpuInfo = GetCPUInfo();
+        //    string ramInfo = GetRAMInfo();
+        //    string diskInfo = GetDiskInfo();
+        //    string hostname = GetHostname();
+        //    string firewallStatus = GetFirewallStatusNetsh();
+        //    string roomNumber = Properties.Settings.Default.roomNumber;
+        //    string comNumber = Properties.Settings.Default.comNumber;
+
+        //    string message = $"{{ \"Room\": \"{roomNumber}\", \"Com\": \"{comNumber}\", \"IP\": \"{ipAddress}\", \"MAC\": \"{macAddress}\", \"CPU\": \"{cpuInfo}\", \"RAM\": \"{ramInfo}\", \"Disk\": \"{diskInfo}\", \"Hostname\": \"{hostname}\", \"Firewall\": \"{firewallStatus}\" }}";
+        //    log.Info($"Sending data to MQTT: {message}");
+
+        //    await SendToMQTT(message);
+
+        //    // Gửi danh sách tiến trình
+        //    string processesJson = GetRunningProcesses();
+        //    log.Info($"Sending processes to MQTT: {processesJson}");
+        //    await SendToMQTT(processesJson, _processesTopic);
+
+        //    // Gửi qua Serial
+        //    try
+        //    {
+        //        if (_serialPort != null && _serialPort.IsOpen)
+        //        {
+        //            _serialPort.WriteLine(message);
+        //            log.Info("Sent data over Serial: " + message);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        log.Error("Error sending data over Serial", ex);
+        //    }
+        //}
         private async Task OnElapsedTime()
         {
-            log.Info("Service is running...");
+            log.Info("Timer ticked, collecting and sending system info.");
+            await SendSystemInfo();
 
+            // Gửi danh sách tiến trình
+            string processesJson = GetRunningProcesses();
+            log.Info($"Sending processes to MQTT: {processesJson}");
+            await SendToMQTT(processesJson, _processesTopic);
+        }
+
+        private async Task SendSystemInfo()
+        {
             string ipAddress = GetLocalIPAddress();
             string macAddress = GetMACAddress();
             string cpuInfo = GetCPUInfo();
@@ -190,22 +237,16 @@ namespace NewWindowsService
             string comNumber = Properties.Settings.Default.comNumber;
 
             string message = $"{{ \"Room\": \"{roomNumber}\", \"Com\": \"{comNumber}\", \"IP\": \"{ipAddress}\", \"MAC\": \"{macAddress}\", \"CPU\": \"{cpuInfo}\", \"RAM\": \"{ramInfo}\", \"Disk\": \"{diskInfo}\", \"Hostname\": \"{hostname}\", \"Firewall\": \"{firewallStatus}\" }}";
-            log.Info($"Sending data to MQTT: {message}");
-
+            log.Info($"[Auto] Sending system info to MQTT: {message}");
             await SendToMQTT(message);
 
-            // Gửi danh sách tiến trình
-            string processesJson = GetRunningProcesses();
-            log.Info($"Sending processes to MQTT: {processesJson}");
-            await SendToMQTT(processesJson, _processesTopic);
-
-            // Gửi qua Serial
+            // Gửi qua Serial nếu cần
             try
             {
                 if (_serialPort != null && _serialPort.IsOpen)
                 {
                     _serialPort.WriteLine(message);
-                    log.Info("Sent data over Serial: " + message);
+                    log.Info("Sent system info over Serial: " + message);
                 }
             }
             catch (Exception ex)
@@ -213,6 +254,7 @@ namespace NewWindowsService
                 log.Error("Error sending data over Serial", ex);
             }
         }
+
 
         private async Task SendToMQTT(string message, string topic = null)
         {
@@ -262,6 +304,8 @@ namespace NewWindowsService
         {
             try
             {
+                bool killed = false;
+
                 if (int.TryParse(processInfo, out int processId))
                 {
                     var process = Process.GetProcessById(processId);
@@ -290,6 +334,12 @@ namespace NewWindowsService
                     {
                         log.Warn($"No process found with name {processInfo}.");
                     }
+                }
+
+                // Nếu có tiến trình đã bị kill thì gửi lại thông tin
+                if (killed)
+                {
+                    _ = SendSystemInfo(); // Gọi bất đồng bộ
                 }
             }
             catch (Exception ex)
@@ -330,6 +380,9 @@ namespace NewWindowsService
                 else
                 {
                     log.Info($"Firewall command executed: {output}");
+
+                    // Gửi thông tin hệ thống sau khi thay đổi firewall
+                    _ = SendSystemInfo(); // Gọi bất đồng bộ
                 }
             }
             catch (Exception ex)

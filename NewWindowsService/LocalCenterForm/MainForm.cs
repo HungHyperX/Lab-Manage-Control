@@ -70,7 +70,7 @@ namespace LocalCenterForm
                 {
                     Log("Connected to MQTT broker successfully");
                     btnConnect.Enabled = false;
-                    lblStatus.Text = "Connected";
+                    lblStatus.Text = "MQTT Connected";
                 });
 
                 await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(_subTopic).Build());
@@ -89,7 +89,7 @@ namespace LocalCenterForm
                 {
                     Log("Disconnected from MQTT broker");
                     btnConnect.Enabled = true;
-                    lblStatus.Text = "Disconnected";
+                    lblStatus.Text = "MQTT Disconnected";
                 });
                 await AttemptReconnect();
             };
@@ -105,6 +105,7 @@ namespace LocalCenterForm
                     {
                         Log($"Message received on {topic}: {payload}");
                         //txtMqttMessages.AppendText($"[{DateTime.Now:HH:mm:ss}] [{topic}] {payload}\r\n");
+                        UpdateThongTinTable(payload);
                     }
                     else if (topic == _processesTopic)
                     {
@@ -163,6 +164,28 @@ namespace LocalCenterForm
             catch (Exception ex)
             {
                 Log($"Error parsing RFID JSON: {ex.Message}");
+            }
+        }
+
+        private void UpdateThongTinTable(string json)
+        {
+            try
+            {
+                var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+                if (data == null) return;
+
+                infoDataGrid.Rows.Clear();
+
+                foreach (var kvp in data)
+                {
+                    int rowIndex = infoDataGrid.Rows.Add();
+                    infoDataGrid.Rows[rowIndex].Cells[0].Value = kvp.Key;
+                    infoDataGrid.Rows[rowIndex].Cells[1].Value = kvp.Value?.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Error parsing thongtin JSON: {ex.Message}");
             }
         }
 
@@ -332,6 +355,11 @@ namespace LocalCenterForm
         private void Log(string message)
         {
             txtLog.AppendText($"[{DateTime.Now:HH:mm:ss}] {message}\r\n");
+        }
+
+        private void lblCurrentComputer_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
