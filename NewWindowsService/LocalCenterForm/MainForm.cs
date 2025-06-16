@@ -8,6 +8,7 @@ using System.Threading;
 using System.Linq;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Net.Http;
 
 namespace LocalCenterForm
 {
@@ -146,7 +147,28 @@ namespace LocalCenterForm
             }
         }
 
-        private void UpdateRfidDisplay(string json)
+        //private void UpdateRfidDisplay(string json)
+        //{
+        //    try
+        //    {
+        //        var jsonObj = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+        //        if (jsonObj != null && jsonObj.ContainsKey("rfid"))
+        //        {
+        //            var rfidValue = jsonObj["rfid"];
+        //            txtRfid.Text = rfidValue;
+        //        }
+        //        else
+        //        {
+        //            Log("Invalid RFID JSON received");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Log($"Error parsing RFID JSON: {ex.Message}");
+        //    }
+        //}
+
+        private async void UpdateRfidDisplay(string json)
         {
             try
             {
@@ -155,17 +177,43 @@ namespace LocalCenterForm
                 {
                     var rfidValue = jsonObj["rfid"];
                     txtRfid.Text = rfidValue;
+
+                    Log($"Đang truy vấn thông tin sinh viên với thẻ: {rfidValue}");
+                    if (rfidValue != " ")
+                    {
+                        var student = await GetStudentInfoFromApi(rfidValue);
+                        if (student != null)
+                        {
+                            dataGridView1.Rows.Clear();
+                            dataGridView1.Rows.Add("Uid", student.Uid);
+                            dataGridView1.Rows.Add("Họ tên", student.Name);
+                            dataGridView1.Rows.Add("Ngày sinh", student.dob);
+                            dataGridView1.Rows.Add("Ngành học/Khóa", student.Department);
+                            dataGridView1.Rows.Add("MSSV", student.mssv);
+
+                            Log($"Đã hiển thị thông tin sinh viên: {student.Name}");
+                        }
+                        else
+                        {
+                            Log($"Không tìm thấy thông tin sinh viên với mã thẻ: {rfidValue}");
+                        }
+                    }
+                    else
+                    {
+                        dataGridView1.Rows.Clear();
+                    }
                 }
                 else
                 {
-                    Log("Invalid RFID JSON received");
+                    Log("Dữ liệu RFID không hợp lệ");
                 }
             }
             catch (Exception ex)
             {
-                Log($"Error parsing RFID JSON: {ex.Message}");
+                Log($"Lỗi xử lý RFID JSON: {ex.Message}");
             }
         }
+
 
         private void UpdateThongTinTable(string json)
         {
@@ -361,5 +409,46 @@ namespace LocalCenterForm
         {
 
         }
+
+        private async Task<Student> GetStudentInfoFromApi(string rfid)
+        {
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    string apiUrl = "https://apisinhvienfake.onrender.com/api/student";
+
+                    var response = await client.GetAsync($"{apiUrl}/{rfid}");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string json = await response.Content.ReadAsStringAsync();
+                        return JsonConvert.DeserializeObject<Student>(json);
+                    }
+                    else
+                    {
+                        Log($"API trả về lỗi: {(int)response.StatusCode} - {response.ReasonPhrase}");
+                        return null;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Log($"Lỗi gọi API: {ex.Message}");
+                return null;
+            }
+        }
+
+        
+    }
+
+    public class Student
+    {
+        public string Id { get; set; }
+        public string Uid { get; set; }
+        public string Name { get; set; }
+        public string dob { get; set; }
+        public string Department { get; set; }
+        public string mssv { get; set; }
     }
 }

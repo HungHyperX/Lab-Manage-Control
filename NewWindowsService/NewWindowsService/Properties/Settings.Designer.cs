@@ -58,5 +58,17 @@ namespace NewWindowsService.Properties {
                 this["COM_PORT"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("broker.hivemq.com")]
+        public string MQTT_broker {
+            get {
+                return ((string)(this["MQTT_broker"]));
+            }
+            set {
+                this["MQTT_broker"] = value;
+            }
+        }
     }
 }

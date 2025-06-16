@@ -130,13 +130,29 @@ if (digitalRead(SW3) == LOW && now - lastButtonPress > debounceDelay) {
 }
 
 // Nút SW4: chuyển màu tới
+// if (digitalRead(SW4) == LOW && now - lastButtonPress > debounceDelay) {
+//   currentColorIndex = (currentColorIndex + 1) % colorCount;
+//   updateLedColor(ledColors[currentColorIndex]);
+//   //showMessage("Mau LED tang");
+//   beep();
+//   lastButtonPress = now;
+// }
+// Nút SW4: Xóa RFID và gửi {"rfid": " "}
 if (digitalRead(SW4) == LOW && now - lastButtonPress > debounceDelay) {
-  currentColorIndex = (currentColorIndex + 1) % colorCount;
-  updateLedColor(ledColors[currentColorIndex]);
-  //showMessage("Mau LED tang");
+  currentTagID = "";  // Xóa mã RFID đang hiển thị
+
+  StaticJsonDocument<128> doc;
+  doc["rfid"] = " ";  // Gửi chuỗi trống để báo xóa
+
+  String jsonStr;
+  serializeJson(doc, jsonStr);
+  Serial.println(jsonStr);  // Gửi đến Serial
+
+  displayKeyValue();  // Cập nhật OLED
   beep();
   lastButtonPress = now;
 }
+
 
 
   // Đọc RFID

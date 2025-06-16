@@ -9,15 +9,41 @@ namespace TerminalConf
     {
         static void Main(string[] args)
         {
-            if (args.Length != 6 || args[0] != "-r" || args[2] != "-i" || args[4] != "-l")
+            if (args.Length == 0)
             {
-                Console.WriteLine("Cách dùng: TerminalConf.exe -r <Phòng> -i <Máy số> -l <COM_PORT>");
+                PrintUsage();
                 return;
             }
 
-            string room = args[1];
-            string index = args[3];
-            string comPort = args[5];
+            string room = null;
+            string index = null;
+            string comPort = null;
+            string mqttBroker = null;
+
+            for (int i = 0; i < args.Length - 1; i++)
+            {
+                switch (args[i])
+                {
+                    case "-r":
+                        room = args[++i];
+                        break;
+                    case "-i":
+                        index = args[++i];
+                        break;
+                    case "-l":
+                        comPort = args[++i];
+                        break;
+                    case "-f":
+                        mqttBroker = args[++i];
+                        break;
+                }
+            }
+
+            if (room == null && index == null && comPort == null && mqttBroker == null)
+            {
+                PrintUsage();
+                return;
+            }
 
             // Bước 1: Xác định các khả năng đường dẫn
             string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -66,43 +92,36 @@ namespace TerminalConf
             XDocument doc = XDocument.Load(userConfigPath);
             var settings = doc.Descendants("setting").ToList();
 
-            var roomSetting = settings.FirstOrDefault(x => (string)x.Attribute("name") == "roomNumber");
-            var indexSetting = settings.FirstOrDefault(x => (string)x.Attribute("name") == "comNumber");
-            var comPortSetting = settings.FirstOrDefault(x => (string)x.Attribute("name") == "COM_PORT");
-
-            if (roomSetting != null)
-            {
-                roomSetting.Element("value").Value = room;
-                Console.WriteLine($"Đã cập nhật Room = {room}");
-            }
-            else
-            {
-                Console.WriteLine("Không tìm thấy setting Room.");
-            }
-
-            if (indexSetting != null)
-            {
-                indexSetting.Element("value").Value = index;
-                Console.WriteLine($"Đã cập nhật Index = {index}");
-            }
-            else
-            {
-                Console.WriteLine("Không tìm thấy setting Index.");
-            }
-
-            if (comPortSetting != null)
-            {
-                comPortSetting.Element("value").Value = comPort;
-                Console.WriteLine($"Đã cập nhật COM_PORT = {comPort}");
-            }
-            else
-            {
-                Console.WriteLine("Không tìm thấy setting COM_PORT.");
-            }
+            UpdateSetting(settings, "roomNumber", room);
+            UpdateSetting(settings, "comNumber", index);
+            UpdateSetting(settings, "COM_PORT", comPort);
+            UpdateSetting(settings, "MQTT_broker", mqttBroker);
 
             // Bước 4: Save lại
             doc.Save(userConfigPath);
             Console.WriteLine("Đã lưu user.config thành công.");
+        }
+
+        static void UpdateSetting(System.Collections.Generic.List<XElement> settings, string name, string value)
+        {
+            if (value == null) return;
+
+            var setting = settings.FirstOrDefault(x => (string)x.Attribute("name") == name);
+            if (setting != null)
+            {
+                setting.Element("value").Value = value;
+                Console.WriteLine($"Đã cập nhật {name} = {value}");
+            }
+            else
+            {
+                Console.WriteLine($"Không tìm thấy setting {name}.");
+            }
+        }
+
+        static void PrintUsage()
+        {
+            Console.WriteLine("Cách dùng:");
+            Console.WriteLine("  TerminalConf.exe [-r <Phòng>] [-i <Máy số>] [-l <COM_PORT>] [-f <MQTT_Broker>]");
         }
     }
 }

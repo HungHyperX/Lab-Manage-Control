@@ -11,5 +11,8 @@
     <Setting Name="COM_PORT" Type="System.String" Scope="User">
       <Value Profile="(Default)">COM7</Value>
     </Setting>
+    <Setting Name="MQTT_broker" Type="System.String" Scope="User">
+      <Value Profile="(Default)">broker.hivemq.com</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

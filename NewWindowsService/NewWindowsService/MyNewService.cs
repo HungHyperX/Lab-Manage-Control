@@ -29,7 +29,7 @@ namespace NewWindowsService
         private IMqttClient _client;
         private IMqttClientOptions _options;
         private SerialPort _serialPort;
-        private readonly string _broker = "broker.hivemq.com";
+        private readonly string _broker; // = "broker.hivemq.com";
         private readonly int _port = 1883;
         private string _pubTopic; // Topic động: {roomNumber}/{comNumber}/thongtin
         private string _subTopic; // Topic động: {roomNumber}/{comNumber}/subTerminal
@@ -40,6 +40,7 @@ namespace NewWindowsService
         public MyNewService()
         {
             InitializeComponent();
+            _broker = "broker.hivemq.com";
             InitializeMQTT();
         }
 
@@ -92,6 +93,7 @@ namespace NewWindowsService
                 Properties.Settings.Default.roomNumber = "B1-221";
                 Properties.Settings.Default.comNumber = "24";
                 Properties.Settings.Default.COM_PORT = "COM7";
+                Properties.Settings.Default.MQTT_broker = "broker.hivemq.com";
                 Properties.Settings.Default.Save();
                 log.Info("Ghi cấu hình mặc định vì user.config chưa tồn tại.");
             }

@@ -38,6 +38,9 @@ namespace LocalCenterForm
 
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.txtHost = new System.Windows.Forms.TextBox();
             this.txtRoom = new System.Windows.Forms.TextBox();
             this.txtComputer = new System.Windows.Forms.TextBox();
@@ -58,13 +61,16 @@ namespace LocalCenterForm
             this.infoDataGrid = new System.Windows.Forms.DataGridView();
             this.KeyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ValueColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.KeyColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ValueColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.infoDataGrid)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
-
-            this.txtLog.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
-            this.lvProcesses.Anchor = AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom;
-            this.infoDataGrid.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-
             // 
             // txtHost
             // 
@@ -143,12 +149,15 @@ namespace LocalCenterForm
             // 
             // txtLog
             // 
-            this.txtLog.Location = new System.Drawing.Point(234, 206);
+            this.txtLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtLog.Location = new System.Drawing.Point(560, 281);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
             this.txtLog.ReadOnly = true;
             this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtLog.Size = new System.Drawing.Size(706, 147);
+            this.txtLog.Size = new System.Drawing.Size(380, 205);
             this.txtLog.TabIndex = 9;
             // 
             // lblStatus
@@ -161,12 +170,14 @@ namespace LocalCenterForm
             // 
             // lvProcesses
             // 
+            this.lvProcesses.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lvProcesses.FullRowSelect = true;
             this.lvProcesses.GridLines = true;
             this.lvProcesses.HideSelection = false;
-            this.lvProcesses.Location = new System.Drawing.Point(547, 12);
+            this.lvProcesses.Location = new System.Drawing.Point(560, 30);
             this.lvProcesses.Name = "lvProcesses";
-            this.lvProcesses.Size = new System.Drawing.Size(393, 188);
+            this.lvProcesses.Size = new System.Drawing.Size(380, 206);
             this.lvProcesses.TabIndex = 12;
             this.lvProcesses.UseCompatibleStateImageBehavior = false;
             this.lvProcesses.View = System.Windows.Forms.View.Details;
@@ -219,15 +230,41 @@ namespace LocalCenterForm
             // 
             // infoDataGrid
             // 
+            this.infoDataGrid.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.infoDataGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.infoDataGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.infoDataGrid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.KeyColumn,
             this.ValueColumn});
-            this.infoDataGrid.Location = new System.Drawing.Point(234, 12);
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.infoDataGrid.DefaultCellStyle = dataGridViewCellStyle2;
+            this.infoDataGrid.Location = new System.Drawing.Point(234, 30);
             this.infoDataGrid.Name = "infoDataGrid";
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.infoDataGrid.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.infoDataGrid.RowHeadersWidth = 51;
             this.infoDataGrid.RowTemplate.Height = 24;
-            this.infoDataGrid.Size = new System.Drawing.Size(307, 188);
+            this.infoDataGrid.Size = new System.Drawing.Size(307, 206);
             this.infoDataGrid.TabIndex = 17;
             // 
             // KeyColumn
@@ -244,9 +281,78 @@ namespace LocalCenterForm
             this.ValueColumn.Name = "ValueColumn";
             this.ValueColumn.Width = 125;
             // 
+            // dataGridView1
+            // 
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.KeyColumn1,
+            this.ValueColumn1});
+            this.dataGridView1.Location = new System.Drawing.Point(234, 281);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.RowHeadersWidth = 51;
+            this.dataGridView1.RowTemplate.Height = 24;
+            this.dataGridView1.Size = new System.Drawing.Size(307, 205);
+            this.dataGridView1.TabIndex = 18;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(231, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(120, 16);
+            this.label1.TabIndex = 19;
+            this.label1.Text = "Thông tin máy trạm";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(557, 9);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(210, 16);
+            this.label2.TabIndex = 20;
+            this.label2.Text = "Tiến trình đang chạy trên máy trạm";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(231, 259);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(201, 16);
+            this.label3.TabIndex = 21;
+            this.label3.Text = "Thông tin sinh viên đang sử dụng";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(560, 259);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(111, 16);
+            this.label4.TabIndex = 22;
+            this.label4.Text = "Lịch sử hoạt động";
+            // 
+            // KeyColumn1
+            // 
+            this.KeyColumn1.HeaderText = "Key";
+            this.KeyColumn1.MinimumWidth = 6;
+            this.KeyColumn1.Name = "KeyColumn1";
+            this.KeyColumn1.Width = 125;
+            // 
+            // ValueColumn1
+            // 
+            this.ValueColumn1.HeaderText = "Value";
+            this.ValueColumn1.MinimumWidth = 6;
+            this.ValueColumn1.Name = "ValueColumn1";
+            this.ValueColumn1.Width = 125;
+            // 
             // MainForm
             // 
-            this.ClientSize = new System.Drawing.Size(950, 365);
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ClientSize = new System.Drawing.Size(952, 496);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.infoDataGrid);
             this.Controls.Add(this.btnKillProcess);
             this.Controls.Add(this.txtHost);
@@ -265,20 +371,25 @@ namespace LocalCenterForm
             this.Controls.Add(this.lblCurrentRoom);
             this.Controls.Add(this.lblCurrentComputer);
             this.Controls.Add(this.txtRfid);
+            this.MinimumSize = new System.Drawing.Size(800, 400);
             this.Name = "MainForm";
             this.Text = "Local Center";
             ((System.ComponentModel.ISupportInitialize)(this.infoDataGrid)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
-            this.FormBorderStyle = FormBorderStyle.Sizable;
-            this.MinimumSize = new System.Drawing.Size(800, 400);
-            this.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            
         }
 
         private DataGridView infoDataGrid;
         private DataGridViewTextBoxColumn KeyColumn;
         private DataGridViewTextBoxColumn ValueColumn;
+        private DataGridView dataGridView1;
+        private Label label1;
+        private Label label2;
+        private Label label3;
+        private Label label4;
+        private DataGridViewTextBoxColumn KeyColumn1;
+        private DataGridViewTextBoxColumn ValueColumn1;
     }
 }
