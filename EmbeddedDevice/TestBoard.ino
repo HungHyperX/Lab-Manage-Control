@@ -21,20 +21,20 @@ U8G2_SSD1306_128X32_UNIVISION_F_SW_I2C u8g2(U8G2_R0, /* clock=*/ 22, /* data=*/ 
 #define NUM_LEDS    12
 Adafruit_NeoPixel pixels(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
-// LED Colors
+int ledEffectMode = 2;         // 0 = tắt, 1 = màu tĩnh, 2 = vòng, 3 = rainbow, 4 = flash, 5 = thở
+const int totalEffects = 6;
+
 uint32_t ledColors[] = {
-  pixels.Color(255, 0, 0),     // Đỏ
-  pixels.Color(0, 0, 255),     // Xanh dương
-  pixels.Color(0, 255, 0),     // Xanh lá
-  pixels.Color(255, 255, 0),   // Vàng
-  pixels.Color(255, 165, 0),   // Cam
-  pixels.Color(128, 0, 128)    // Tím
+  pixels.Color(255, 0, 0),
+  pixels.Color(0, 0, 255),
+  pixels.Color(0, 255, 0),
+  pixels.Color(255, 255, 0),
+  pixels.Color(255, 165, 0),
+  pixels.Color(128, 0, 128)
 };
 int colorCount = sizeof(ledColors) / sizeof(ledColors[0]);
 int currentColorIndex = 0;
 
-
-// RFID RDM6300
 #define RDM6300_RX_PIN 16
 Rdm6300 rdm6300;
 String currentTagID = "";
@@ -50,8 +50,11 @@ unsigned long lastButtonPress = 0;
 const unsigned long debounceDelay = 250;
 
 unsigned long lastLedUpdate = 0;
-const unsigned long ledUpdateInterval = 100; // Thời gian delay giữa các bước LED
+const unsigned long ledUpdateInterval = 100;
 int ledStep = 0;
+bool flashState = false;
+float breathBrightness = 0;
+bool breathIncreasing = true;
 
 void setup() {
   Serial.begin(115200);
@@ -68,19 +71,17 @@ void setup() {
   pinMode(SW2, INPUT_PULLUP);
   pinMode(SW3, INPUT_PULLUP);
   pinMode(SW4, INPUT_PULLUP);
-
   pinMode(SPEAKER, OUTPUT);
 
   pixels.begin();
   pixels.clear();
   pixels.show();
   updateLedColor(ledColors[currentColorIndex]);
-  // Khởi tạo RFID
+
   rdm6300.begin(RDM6300_RX_PIN);
 }
 
 void loop() {
-  // Đọc JSON từ Serial nếu có
   if (Serial.available() > 0) {
     serialMessage = Serial.readStringUntil('\n');
     serialMessage.trim();
@@ -90,17 +91,19 @@ void loop() {
     }
   }
 
-  // Nếu chưa có serialMessage, chạy LED vòng tròn
-  if (serialMessage.length() == 0) {
-    if (millis() - lastLedUpdate >= ledUpdateInterval) {
-      runLedCircle();
-      lastLedUpdate = millis();
+  if (millis() - lastLedUpdate >= ledUpdateInterval) {
+    switch (ledEffectMode) {
+      case 0: pixels.clear(); pixels.show(); break;
+      case 1: updateLedColor(ledColors[currentColorIndex]); break;
+      case 2: runLedCircle(); break;
+      case 3: rainbowEffect(); break;
+      case 4: flashEffect(); break;
+      case 5: breatheEffect(); break;
     }
+    lastLedUpdate = millis();
   }
 
   unsigned long now = millis();
-
-  // Nút SW1
   if (digitalRead(SW1) == LOW && now - lastButtonPress > debounceDelay) {
     if (keyCount > 0) {
       currentIndex = (currentIndex - 1 + keyCount) % keyCount;
@@ -109,8 +112,6 @@ void loop() {
     }
     lastButtonPress = now;
   }
-
-  // Nút SW2
   if (digitalRead(SW2) == LOW && now - lastButtonPress > debounceDelay) {
     if (keyCount > 0) {
       currentIndex = (currentIndex + 1) % keyCount;
@@ -119,56 +120,34 @@ void loop() {
     }
     lastButtonPress = now;
   }
-
-  // Nút SW3: chuyển màu lùi
-if (digitalRead(SW3) == LOW && now - lastButtonPress > debounceDelay) {
-  currentColorIndex = (currentColorIndex - 1 + colorCount) % colorCount;
-  updateLedColor(ledColors[currentColorIndex]);
-  //showMessage("Mau LED giam");
-  beep();
-  lastButtonPress = now;
-}
-
-// Nút SW4: chuyển màu tới
-// if (digitalRead(SW4) == LOW && now - lastButtonPress > debounceDelay) {
-//   currentColorIndex = (currentColorIndex + 1) % colorCount;
-//   updateLedColor(ledColors[currentColorIndex]);
-//   //showMessage("Mau LED tang");
-//   beep();
-//   lastButtonPress = now;
-// }
-// Nút SW4: Xóa RFID và gửi {"rfid": " "}
-if (digitalRead(SW4) == LOW && now - lastButtonPress > debounceDelay) {
-  currentTagID = "";  // Xóa mã RFID đang hiển thị
-
-  StaticJsonDocument<128> doc;
-  doc["rfid"] = " ";  // Gửi chuỗi trống để báo xóa
-
-  String jsonStr;
-  serializeJson(doc, jsonStr);
-  Serial.println(jsonStr);  // Gửi đến Serial
-
-  displayKeyValue();  // Cập nhật OLED
-  beep();
-  lastButtonPress = now;
-}
-
-
-
-  // Đọc RFID
-  if (rdm6300.get_new_tag_id()) {
-    currentTagID = String(rdm6300.get_tag_id(), HEX);
-
+  if (digitalRead(SW3) == LOW && now - lastButtonPress > debounceDelay) {
+    currentColorIndex = (currentColorIndex - 1 + colorCount) % colorCount;
+    updateLedColor(ledColors[currentColorIndex]);
+    beep();
+    lastButtonPress = now;
+  }
+  if (digitalRead(SW4) == LOW && now - lastButtonPress > debounceDelay) {
+    currentTagID = "";
     StaticJsonDocument<128> doc;
-    doc["rfid"] = currentTagID;
-
+    doc["rfid"] = " ";
     String jsonStr;
     serializeJson(doc, jsonStr);
+    Serial.println(jsonStr);
+    displayKeyValue();
+    beep();
+    lastButtonPress = now;
+  }
 
-    Serial.println(jsonStr); // Gửi JSON qua Serial
-
-    beep(); // Bíp khi có thẻ mới
-    displayKeyValue(); // Cập nhật OLED
+  if (rdm6300.get_new_tag_id()) {
+    currentTagID = String(rdm6300.get_tag_id(), HEX);
+    StaticJsonDocument<128> doc;
+    doc["rfid"] = currentTagID;
+    String jsonStr;
+    serializeJson(doc, jsonStr);
+    Serial.println(jsonStr);
+    flashWithColor(pixels.Color(0, 255, 0));
+    beep();
+    displayKeyValue();
   }
 
   delay(50);
@@ -180,38 +159,33 @@ void beep() {
   digitalWrite(SPEAKER, LOW);
 }
 
-void showMessage(String msg) {
-  u8g2.clearBuffer();
-  u8g2.drawStr(0, 10, "ESP32 Test");
-  u8g2.drawStr(0, 20, msg.c_str());
-  u8g2.sendBuffer();
-}
-
 void parseAndStoreJson(String jsonStr) {
   DeserializationError error = deserializeJson(jsonDoc, jsonStr);
-  if (error) {
-    Serial.print("JSON parse error: ");
-    Serial.println(error.c_str());
-    showMessage("JSON error");
-    return;
-  }
-
+  if (error) return;
   keyCount = 0;
   currentIndex = 0;
-
-  for (JsonPair kv : jsonDoc.as<JsonObject>()) {
+  // for (JsonPair kv : jsonDoc.as<JsonObject>()) {
+  //   if (keyCount < 10) {
+  //     keys[keyCount] = kv.key().c_str();
+  //     values[keyCount] = kv.value().as<String>();
+  //     keyCount++;
+  //   }
+  // }
+  if (jsonDoc.containsKey("led_ring")) {
+    String cmd = jsonDoc["led_ring"].as<String>();
+    if (cmd == "ring_on") {
+      ledEffectMode = (ledEffectMode + 1) % totalEffects;
+      Serial.print("LED mode: ");
+      Serial.println(ledEffectMode);
+    }
+  }else{
+    for (JsonPair kv : jsonDoc.as<JsonObject>()) {
     if (keyCount < 10) {
       keys[keyCount] = kv.key().c_str();
       values[keyCount] = kv.value().as<String>();
       keyCount++;
     }
   }
-
-  Serial.println("JSON parsed:");
-  for (int i = 0; i < keyCount; i++) {
-    Serial.print(keys[i]);
-    Serial.print(": ");
-    Serial.println(values[i]);
   }
 }
 
@@ -220,32 +194,10 @@ void displayKeyValue() {
   u8g2.drawStr(0, 10, "Serial JSON:");
   String displayStr = (keyCount > 0) ? keys[currentIndex] + ": " + values[currentIndex] : "";
   u8g2.drawStr(0, 20, displayStr.c_str());
-
   String rfidLine = "RFID: ";
-  if (currentTagID.length() > 0) {
-    rfidLine += currentTagID;
-  }
+  if (currentTagID.length() > 0) rfidLine += currentTagID;
   u8g2.drawStr(0, 30, rfidLine.c_str());
-
   u8g2.sendBuffer();
-
-  Serial.print("OLED: ");
-  Serial.println(displayStr);
-}
-
-void runLedCircle() {
-  pixels.clear();
-
-  int ledPos = ledStep % NUM_LEDS;
-  //pixels.setPixelColor(ledPos, pixels.Color(0, 0, 255)); // Màu xanh
-  updateLedColor(ledColors[currentColorIndex]);
-  // Tùy chỉnh thêm màu "đuôi" nếu muốn đẹp hơn
-  int prevLed = (ledPos - 1 + NUM_LEDS) % NUM_LEDS;
-  pixels.setPixelColor(prevLed, pixels.Color(0, 0, 50)); // Đuôi mờ
-
-  pixels.show();
-
-  ledStep++;
 }
 
 void updateLedColor(uint32_t color) {
@@ -255,3 +207,76 @@ void updateLedColor(uint32_t color) {
   pixels.show();
 }
 
+void runLedCircle() {
+  pixels.clear();
+  int ledPos = ledStep % NUM_LEDS;
+  updateLedColor(ledColors[currentColorIndex]);
+  int prevLed = (ledPos - 1 + NUM_LEDS) % NUM_LEDS;
+  pixels.setPixelColor(prevLed, pixels.Color(0, 0, 50));
+  pixels.show();
+  ledStep++;
+}
+
+void rainbowEffect() {
+  for (int i = 0; i < NUM_LEDS; i++) {
+    int hue = (ledStep * 10 + i * 360 / NUM_LEDS) % 360;
+    pixels.setPixelColor(i, HSBtoRGB(hue, 1.0, 0.5));
+  }
+  pixels.show();
+  ledStep++;
+}
+
+void flashEffect() {
+  flashState = !flashState;
+  uint32_t color = flashState ? pixels.Color(255, 255, 255) : pixels.Color(0, 0, 0);
+  for (int i = 0; i < NUM_LEDS; i++) {
+    pixels.setPixelColor(i, color);
+  }
+  pixels.show();
+}
+
+void breatheEffect() {
+  float step = 0.02;
+  if (breathIncreasing) {
+    breathBrightness += step;
+    if (breathBrightness >= 1.0) breathIncreasing = false;
+  } else {
+    breathBrightness -= step;
+    if (breathBrightness <= 0.05) breathIncreasing = true;
+  }
+  uint8_t r = (uint8_t)(ledColors[currentColorIndex] >> 16 & 0xFF);
+  uint8_t g = (uint8_t)(ledColors[currentColorIndex] >> 8 & 0xFF);
+  uint8_t b = (uint8_t)(ledColors[currentColorIndex] & 0xFF);
+  for (int i = 0; i < NUM_LEDS; i++) {
+    pixels.setPixelColor(i, pixels.Color(r * breathBrightness, g * breathBrightness, b * breathBrightness));
+  }
+  pixels.show();
+}
+
+uint32_t HSBtoRGB(float hue, float sat, float brightness) {
+  float r = 0, g = 0, b = 0;
+  int i = int(hue / 60.0) % 6;
+  float f = (hue / 60.0) - i;
+  float p = brightness * (1.0 - sat);
+  float q = brightness * (1.0 - f * sat);
+  float t = brightness * (1.0 - (1.0 - f) * sat);
+  switch (i) {
+    case 0: r = brightness; g = t; b = p; break;
+    case 1: r = q; g = brightness; b = p; break;
+    case 2: r = p; g = brightness; b = t; break;
+    case 3: r = p; g = q; b = brightness; break;
+    case 4: r = t; g = p; b = brightness; break;
+    case 5: r = brightness; g = p; b = q; break;
+  }
+  return pixels.Color(r * 255, g * 255, b * 255);
+}
+
+void flashWithColor(uint32_t color) {
+  for (int i = 0; i < NUM_LEDS; i++) {
+    pixels.setPixelColor(i, color);
+  }
+  pixels.show();
+  delay(300);
+  pixels.clear();
+  pixels.show();
+}

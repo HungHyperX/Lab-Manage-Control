@@ -75,6 +75,11 @@ namespace NewWindowsService
                         log.Info("Received shutdown command");
                         ShutdownComputer();
                     }
+                    else if (message.Trim().ToUpper() == "LIGHT_ON")
+                    {
+                        log.Info("Received light command");
+                        ChangeLedState();
+                    }
                 }
                 else if (e.ApplicationMessage.Topic == _killProcessTopic && !string.IsNullOrEmpty(message))
                 {
@@ -540,6 +545,27 @@ namespace NewWindowsService
             catch (Exception ex)
             {
                 log.Error("Error while trying to shutdown the computer", ex);
+            }
+        }
+
+        private void ChangeLedState()
+        {
+            string ledCommand = "{\"led_ring\": \"ring_on\"}";
+            try
+            {
+                if (_serialPort != null && _serialPort.IsOpen)
+                {
+                    _serialPort.WriteLine(ledCommand);
+                    log.Info($"Sent LED ring command over Serial: {ledCommand}");
+                }
+                else
+                {
+                    log.Warn("Serial port is not open. Cannot send LED ring command.");
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Error("Error sending LED ring command over Serial", ex);
             }
         }
 
