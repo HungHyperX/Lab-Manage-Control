@@ -4,25 +4,21 @@
 #include <ArduinoJson.h>
 #include <rdm6300.h>
 
-// OLED cấu hình
 U8G2_SSD1306_128X32_UNIVISION_F_SW_I2C u8g2(U8G2_R0, /* clock=*/ 22, /* data=*/ 21, /* reset=*/ U8X8_PIN_NONE);
 
-// Nút nhấn
 #define SW1 23
 #define SW2 25
 #define SW3 26
 #define SW4 27
-
-// Loa
 #define SPEAKER 13
-
-// LED WS2812 cấu hình
 #define LED_PIN     4
 #define NUM_LEDS    12
+
 Adafruit_NeoPixel pixels(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
 
-int ledEffectMode = 2;         // 0 = tắt, 1 = màu tĩnh, 2 = vòng, 3 = rainbow, 4 = flash, 5 = thở
+int ledEffectMode = 2;
 const int totalEffects = 6;
+const float brightnessFactor = 0.2; // Giảm độ sáng xuống 20%
 
 uint32_t ledColors[] = {
   pixels.Color(255, 0, 0),
@@ -48,7 +44,6 @@ int currentIndex = 0;
 
 unsigned long lastButtonPress = 0;
 const unsigned long debounceDelay = 250;
-
 unsigned long lastLedUpdate = 0;
 const unsigned long ledUpdateInterval = 100;
 int ledStep = 0;
@@ -60,24 +55,20 @@ void setup() {
   Serial.begin(115200);
   delay(1000);
   Serial.println("ESP32 + OLED U8g2 + WS2812 + RFID");
-
   u8g2.begin();
   u8g2.setFont(u8g2_font_ncenB08_tr);
   u8g2.clearBuffer();
   u8g2.drawStr(0, 10, "Khoi dong...");
   u8g2.sendBuffer();
-
   pinMode(SW1, INPUT_PULLUP);
   pinMode(SW2, INPUT_PULLUP);
   pinMode(SW3, INPUT_PULLUP);
   pinMode(SW4, INPUT_PULLUP);
   pinMode(SPEAKER, OUTPUT);
-
   pixels.begin();
   pixels.clear();
   pixels.show();
   updateLedColor(ledColors[currentColorIndex]);
-
   rdm6300.begin(RDM6300_RX_PIN);
 }
 
@@ -90,7 +81,6 @@ void loop() {
       if (keyCount > 0) displayKeyValue();
     }
   }
-
   if (millis() - lastLedUpdate >= ledUpdateInterval) {
     switch (ledEffectMode) {
       case 0: pixels.clear(); pixels.show(); break;
@@ -102,7 +92,6 @@ void loop() {
     }
     lastLedUpdate = millis();
   }
-
   unsigned long now = millis();
   if (digitalRead(SW1) == LOW && now - lastButtonPress > debounceDelay) {
     if (keyCount > 0) {
@@ -137,7 +126,6 @@ void loop() {
     beep();
     lastButtonPress = now;
   }
-
   if (rdm6300.get_new_tag_id()) {
     currentTagID = String(rdm6300.get_tag_id(), HEX);
     StaticJsonDocument<128> doc;
@@ -149,7 +137,6 @@ void loop() {
     beep();
     displayKeyValue();
   }
-
   delay(50);
 }
 
@@ -164,13 +151,6 @@ void parseAndStoreJson(String jsonStr) {
   if (error) return;
   keyCount = 0;
   currentIndex = 0;
-  // for (JsonPair kv : jsonDoc.as<JsonObject>()) {
-  //   if (keyCount < 10) {
-  //     keys[keyCount] = kv.key().c_str();
-  //     values[keyCount] = kv.value().as<String>();
-  //     keyCount++;
-  //   }
-  // }
   if (jsonDoc.containsKey("led_ring")) {
     String cmd = jsonDoc["led_ring"].as<String>();
     if (cmd == "ring_on") {
@@ -178,14 +158,14 @@ void parseAndStoreJson(String jsonStr) {
       Serial.print("LED mode: ");
       Serial.println(ledEffectMode);
     }
-  }else{
+  } else {
     for (JsonPair kv : jsonDoc.as<JsonObject>()) {
-    if (keyCount < 10) {
-      keys[keyCount] = kv.key().c_str();
-      values[keyCount] = kv.value().as<String>();
-      keyCount++;
+      if (keyCount < 10) {
+        keys[keyCount] = kv.key().c_str();
+        values[keyCount] = kv.value().as<String>();
+        keyCount++;
+      }
     }
-  }
   }
 }
 
@@ -201,8 +181,14 @@ void displayKeyValue() {
 }
 
 void updateLedColor(uint32_t color) {
+  uint8_t r = (color >> 16) & 0xFF;
+  uint8_t g = (color >> 8) & 0xFF;
+  uint8_t b = color & 0xFF;
+  r = r * brightnessFactor;
+  g = g * brightnessFactor;
+  b = b * brightnessFactor;
   for (int i = 0; i < NUM_LEDS; i++) {
-    pixels.setPixelColor(i, color);
+    pixels.setPixelColor(i, pixels.Color(r, g, b));
   }
   pixels.show();
 }
@@ -210,9 +196,9 @@ void updateLedColor(uint32_t color) {
 void runLedCircle() {
   pixels.clear();
   int ledPos = ledStep % NUM_LEDS;
-  updateLedColor(ledColors[currentColorIndex]);
+  pixels.setPixelColor(ledPos, dimColor(ledColors[currentColorIndex]));
   int prevLed = (ledPos - 1 + NUM_LEDS) % NUM_LEDS;
-  pixels.setPixelColor(prevLed, pixels.Color(0, 0, 50));
+  pixels.setPixelColor(prevLed, dimColor(pixels.Color(0, 0, 50)));
   pixels.show();
   ledStep++;
 }
@@ -220,7 +206,7 @@ void runLedCircle() {
 void rainbowEffect() {
   for (int i = 0; i < NUM_LEDS; i++) {
     int hue = (ledStep * 10 + i * 360 / NUM_LEDS) % 360;
-    pixels.setPixelColor(i, HSBtoRGB(hue, 1.0, 0.5));
+    pixels.setPixelColor(i, dimColor(HSBtoRGB(hue, 1.0, 0.5)));
   }
   pixels.show();
   ledStep++;
@@ -229,6 +215,7 @@ void rainbowEffect() {
 void flashEffect() {
   flashState = !flashState;
   uint32_t color = flashState ? pixels.Color(255, 255, 255) : pixels.Color(0, 0, 0);
+  color = dimColor(color);
   for (int i = 0; i < NUM_LEDS; i++) {
     pixels.setPixelColor(i, color);
   }
@@ -247,8 +234,11 @@ void breatheEffect() {
   uint8_t r = (uint8_t)(ledColors[currentColorIndex] >> 16 & 0xFF);
   uint8_t g = (uint8_t)(ledColors[currentColorIndex] >> 8 & 0xFF);
   uint8_t b = (uint8_t)(ledColors[currentColorIndex] & 0xFF);
+  r *= breathBrightness * brightnessFactor;
+  g *= breathBrightness * brightnessFactor;
+  b *= breathBrightness * brightnessFactor;
   for (int i = 0; i < NUM_LEDS; i++) {
-    pixels.setPixelColor(i, pixels.Color(r * breathBrightness, g * breathBrightness, b * breathBrightness));
+    pixels.setPixelColor(i, pixels.Color(r, g, b));
   }
   pixels.show();
 }
@@ -271,7 +261,18 @@ uint32_t HSBtoRGB(float hue, float sat, float brightness) {
   return pixels.Color(r * 255, g * 255, b * 255);
 }
 
+uint32_t dimColor(uint32_t color) {
+  uint8_t r = (color >> 16) & 0xFF;
+  uint8_t g = (color >> 8) & 0xFF;
+  uint8_t b = color & 0xFF;
+  r = r * brightnessFactor;
+  g = g * brightnessFactor;
+  b = b * brightnessFactor;
+  return pixels.Color(r, g, b);
+}
+
 void flashWithColor(uint32_t color) {
+  color = dimColor(color);
   for (int i = 0; i < NUM_LEDS; i++) {
     pixels.setPixelColor(i, color);
   }
