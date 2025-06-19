@@ -82,7 +82,7 @@ link video demo: https://youtu.be/zJa7xOMSXmA
   ### 1. Cách cài đặt:
   - Mở NewWindowsService\LocalCenterForm-Setup\Debug. Nhấp vào setup.exe để cài đặt.
   ### 2. Cách chạy:
-  - Chạy C:\Program Files (x86)\hunghyperx@gmail.com\LocalCenterForm-Setup\LocalCenterForm.exe
+  - Chạy C:\Program Files (x86)\hunghyperx\LocalCenterForm-Setup\LocalCenterForm.exe
   ![image](https://github.com/user-attachments/assets/ba550a6b-9b68-4a94-825d-d7eace653b96)
 
   
