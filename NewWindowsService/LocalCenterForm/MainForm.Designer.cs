@@ -62,12 +62,13 @@ namespace LocalCenterForm
             this.KeyColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ValueColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.KeyColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ValueColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.KeyColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ValueColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.comboBoxMachines = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.infoDataGrid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
@@ -95,9 +96,9 @@ namespace LocalCenterForm
             // 
             // btnConnect
             // 
-            this.btnConnect.Location = new System.Drawing.Point(12, 90);
+            this.btnConnect.Location = new System.Drawing.Point(113, 90);
             this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(200, 23);
+            this.btnConnect.Size = new System.Drawing.Size(99, 23);
             this.btnConnect.TabIndex = 3;
             this.btnConnect.Text = "Connect MQTT";
             this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
@@ -208,7 +209,6 @@ namespace LocalCenterForm
             this.lblCurrentComputer.Size = new System.Drawing.Size(200, 23);
             this.lblCurrentComputer.TabIndex = 15;
             this.lblCurrentComputer.Text = "Current Computer: None";
-            this.lblCurrentComputer.Click += new System.EventHandler(this.lblCurrentComputer_Click);
             // 
             // txtRfid
             // 
@@ -294,6 +294,20 @@ namespace LocalCenterForm
             this.dataGridView1.Size = new System.Drawing.Size(307, 205);
             this.dataGridView1.TabIndex = 18;
             // 
+            // KeyColumn1
+            // 
+            this.KeyColumn1.HeaderText = "Key";
+            this.KeyColumn1.MinimumWidth = 6;
+            this.KeyColumn1.Name = "KeyColumn1";
+            this.KeyColumn1.Width = 125;
+            // 
+            // ValueColumn1
+            // 
+            this.ValueColumn1.HeaderText = "Value";
+            this.ValueColumn1.MinimumWidth = 6;
+            this.ValueColumn1.Name = "ValueColumn1";
+            this.ValueColumn1.Width = 125;
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -330,24 +344,19 @@ namespace LocalCenterForm
             this.label4.TabIndex = 22;
             this.label4.Text = "Lịch sử hoạt động";
             // 
-            // KeyColumn1
+            // comboBoxMachines
             // 
-            this.KeyColumn1.HeaderText = "Key";
-            this.KeyColumn1.MinimumWidth = 6;
-            this.KeyColumn1.Name = "KeyColumn1";
-            this.KeyColumn1.Width = 125;
-            // 
-            // ValueColumn1
-            // 
-            this.ValueColumn1.HeaderText = "Value";
-            this.ValueColumn1.MinimumWidth = 6;
-            this.ValueColumn1.Name = "ValueColumn1";
-            this.ValueColumn1.Width = 125;
+            this.comboBoxMachines.FormattingEnabled = true;
+            this.comboBoxMachines.Location = new System.Drawing.Point(12, 90);
+            this.comboBoxMachines.Name = "comboBoxMachines";
+            this.comboBoxMachines.Size = new System.Drawing.Size(98, 24);
+            this.comboBoxMachines.TabIndex = 24;
             // 
             // MainForm
             // 
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(952, 496);
+            this.Controls.Add(this.comboBoxMachines);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -391,5 +400,6 @@ namespace LocalCenterForm
         private Label label4;
         private DataGridViewTextBoxColumn KeyColumn1;
         private DataGridViewTextBoxColumn ValueColumn1;
+        private ComboBox comboBoxMachines;
     }
 }

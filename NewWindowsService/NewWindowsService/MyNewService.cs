@@ -44,13 +44,141 @@ namespace NewWindowsService
             InitializeMQTT();
         }
 
+        //private void InitializeMQTT()
+        //{
+        //    var factory = new MqttFactory();
+        //    _client = factory.CreateMqttClient();
+
+        //    _options = new MqttClientOptionsBuilder()
+        //        .WithTcpServer(_broker, _port)
+        //        .Build();
+
+        //    _client.ApplicationMessageReceived += (s, e) =>
+        //    {
+        //        string message = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+        //        log.Info($"Received MQTT Message from {e.ApplicationMessage.Topic}: {message}");
+
+        //        if (e.ApplicationMessage.Topic == _subTopic)
+        //        {
+        //            if (message.Trim().ToUpper() == "ON")
+        //            {
+        //                log.Info("Turning Firewall ON");
+        //                SetFirewallState(true);
+        //            }
+        //            else if (message.Trim().ToUpper() == "OFF")
+        //            {
+        //                log.Info("Turning Firewall OFF");
+        //                SetFirewallState(false);
+        //            }
+        //            else if (message.Trim().ToUpper() == "SHUTDOWN")
+        //            {
+        //                log.Info("Received shutdown command");
+        //                ShutdownComputer();
+        //            }
+        //            else if (message.Trim().ToUpper() == "LIGHT_ON")
+        //            {
+        //                log.Info("Received light command");
+        //                ChangeLedState();
+        //            }
+        //        }
+        //        else if (e.ApplicationMessage.Topic == _killProcessTopic && !string.IsNullOrEmpty(message))
+        //        {
+        //            log.Info($"Received kill process command: {message}");
+        //            KillProcess(message);
+        //        }
+        //    };
+        //}
+
+        //protected override void OnStart(string[] args)
+        //{
+        //    log.Info("Terminal Service Started.");
+
+        //    if (!IsUserConfigCreated())
+        //    {
+        //        Properties.Settings.Default.roomNumber = "B1-221";
+        //        Properties.Settings.Default.comNumber = "24";
+        //        Properties.Settings.Default.COM_PORT = "COM7";
+        //        Properties.Settings.Default.MQTT_broker = "broker.hivemq.com";
+        //        Properties.Settings.Default.Save();
+        //        log.Info("Ghi cấu hình mặc định vì user.config chưa tồn tại.");
+        //    }
+        //    else
+        //    {
+        //        log.Info($"Đọc cấu hình từ user.config: Room = {Properties.Settings.Default.roomNumber}, Com = {Properties.Settings.Default.comNumber}");
+        //    }
+
+        //    // Khởi tạo các topic động
+        //    string roomNumber = Properties.Settings.Default.roomNumber;
+        //    string comNumber = Properties.Settings.Default.comNumber;
+        //    _pubTopic = $"{roomNumber}/{comNumber}/thongtin";
+        //    _subTopic = $"{roomNumber}/{comNumber}/subTerminal";
+        //    _processesTopic = $"{roomNumber}/{comNumber}/processes";
+        //    _killProcessTopic = $"{roomNumber}/{comNumber}/killProcess";
+        //    _studentTagTopic = $"{roomNumber}/{comNumber}/studentTagId";
+
+        //    // Khởi tạo Serial Port
+        //    string com_port = Properties.Settings.Default.COM_PORT;
+        //    _serialPort = new SerialPort(com_port, 115200);
+        //    _serialPort.Encoding = Encoding.UTF8;
+        //    _serialPort.NewLine = "\n";
+
+
+
+        //    try
+        //    {
+        //        if (!_serialPort.IsOpen)
+        //            _serialPort.Open();
+        //        log.Info("Serial port opened successfully.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        log.Error("Error opening serial port", ex);
+        //    }
+
+        //    _serialPort.DataReceived += SerialPort_DataReceived;
+
+        //    timer = new System.Timers.Timer(20000); // 20 giây
+        //    timer.Elapsed += async (sender, e) => await OnElapsedTime();
+        //    timer.Start();
+
+        //    Task.Run(() => ConnectAndSubscribe());
+        //}
+
+        //protected override void OnStop()
+        //{
+        //    log.Info("Terminal Service Stopped.");
+        //    timer.Stop();
+
+        //    if (_serialPort != null && _serialPort.IsOpen)
+        //    {
+        //        _serialPort.Close();
+        //        log.Info("Serial port closed.");
+        //    }
+        //}
+
+        private async Task SendStatusToMQTT(string status)
+        {
+            string statusTopic = $"{Properties.Settings.Default.roomNumber}/{Properties.Settings.Default.comNumber}/hunghyper/LocalCenter/status";
+            string statusMessage = $"{{ \"status\": \"{status}\" }}";
+            log.Info($"Sending status {Properties.Settings.Default.roomNumber}/{Properties.Settings.Default.comNumber} from to MQTT: {statusMessage}");
+            await SendToMQTT(statusMessage, statusTopic);
+        }
+
         private void InitializeMQTT()
         {
             var factory = new MqttFactory();
             _client = factory.CreateMqttClient();
 
+            // Cấu hình LWT
+            var willMessage = new MqttApplicationMessageBuilder()
+                .WithTopic($"{Properties.Settings.Default.roomNumber}/{Properties.Settings.Default.comNumber}/hunghyper/LocalCenter/status")
+                .WithPayload(Encoding.UTF8.GetBytes("{\"status\": \"offline\"}"))
+                .WithRetainFlag(true)
+                .Build();
+
             _options = new MqttClientOptionsBuilder()
                 .WithTcpServer(_broker, _port)
+                .WithWillMessage(willMessage)
                 .Build();
 
             _client.ApplicationMessageReceived += (s, e) =>
@@ -116,13 +244,12 @@ namespace NewWindowsService
             _killProcessTopic = $"{roomNumber}/{comNumber}/killProcess";
             _studentTagTopic = $"{roomNumber}/{comNumber}/studentTagId";
 
+            
             // Khởi tạo Serial Port
             string com_port = Properties.Settings.Default.COM_PORT;
             _serialPort = new SerialPort(com_port, 115200);
             _serialPort.Encoding = Encoding.UTF8;
             _serialPort.NewLine = "\n";
-            
-
 
             try
             {
@@ -141,12 +268,24 @@ namespace NewWindowsService
             timer.Elapsed += async (sender, e) => await OnElapsedTime();
             timer.Start();
 
-            Task.Run(() => ConnectAndSubscribe());
+            //Task.Run(() => ConnectAndSubscribe());
+            //// Gửi trạng thái online khi khởi động
+            //Task.Run(async () => await SendStatusToMQTT("online"));
+
+            Task.Run(async () =>
+            {
+                await ConnectAndSubscribe();
+                await SendStatusToMQTT("online");
+            });
+
         }
 
         protected override void OnStop()
         {
             log.Info("Terminal Service Stopped.");
+
+            Task.Run(async () => await SendStatusToMQTT("offline")).Wait();
+
             timer.Stop();
 
             if (_serialPort != null && _serialPort.IsOpen)
@@ -154,7 +293,16 @@ namespace NewWindowsService
                 _serialPort.Close();
                 log.Info("Serial port closed.");
             }
+
+            // Ngắt kết nối MQTT để kích hoạt LWT
+            if (_client != null && _client.IsConnected)
+            {
+                Task.Run(async () => await _client.DisconnectAsync()).Wait();
+                log.Info("Disconnected from MQTT Broker to trigger LWT.");
+            }
         }
+
+
 
         private bool IsUserConfigCreated()
         {
@@ -182,44 +330,6 @@ namespace NewWindowsService
             }
         }
 
-        //private async Task OnElapsedTime()
-        //{
-        //    log.Info("Service is running...");
-
-        //    string ipAddress = GetLocalIPAddress();
-        //    string macAddress = GetMACAddress();
-        //    string cpuInfo = GetCPUInfo();
-        //    string ramInfo = GetRAMInfo();
-        //    string diskInfo = GetDiskInfo();
-        //    string hostname = GetHostname();
-        //    string firewallStatus = GetFirewallStatusNetsh();
-        //    string roomNumber = Properties.Settings.Default.roomNumber;
-        //    string comNumber = Properties.Settings.Default.comNumber;
-
-        //    string message = $"{{ \"Room\": \"{roomNumber}\", \"Com\": \"{comNumber}\", \"IP\": \"{ipAddress}\", \"MAC\": \"{macAddress}\", \"CPU\": \"{cpuInfo}\", \"RAM\": \"{ramInfo}\", \"Disk\": \"{diskInfo}\", \"Hostname\": \"{hostname}\", \"Firewall\": \"{firewallStatus}\" }}";
-        //    log.Info($"Sending data to MQTT: {message}");
-
-        //    await SendToMQTT(message);
-
-        //    // Gửi danh sách tiến trình
-        //    string processesJson = GetRunningProcesses();
-        //    log.Info($"Sending processes to MQTT: {processesJson}");
-        //    await SendToMQTT(processesJson, _processesTopic);
-
-        //    // Gửi qua Serial
-        //    try
-        //    {
-        //        if (_serialPort != null && _serialPort.IsOpen)
-        //        {
-        //            _serialPort.WriteLine(message);
-        //            log.Info("Sent data over Serial: " + message);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        log.Error("Error sending data over Serial", ex);
-        //    }
-        //}
         private async Task OnElapsedTime()
         {
             log.Info("Timer ticked, collecting and sending system info.");

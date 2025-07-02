@@ -24,6 +24,7 @@ namespace LocalCenterForm
         private string _killProcessTopic;
 
         private readonly SemaphoreSlim _connectLock = new SemaphoreSlim(1, 1);
+        private readonly Dictionary<string, string> _machines = new Dictionary<string, string>(); // room/com -> status
 
         public MainForm()
         {
@@ -77,10 +78,11 @@ namespace LocalCenterForm
                 await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(_subTopic).Build());
                 await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(_processesTopic).Build());
                 await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic(_studentTagTopic).Build());
+                await _client.SubscribeAsync(new MqttTopicFilterBuilder().WithTopic("+/+/hunghyper/LocalCenter/status").Build()); // Sử dụng +/+/status
 
                 Invoke((MethodInvoker)delegate
                 {
-                    Log($"Subscribed to {_subTopic}, {_processesTopic}, {_studentTagTopic}");
+                    Log($"Subscribed to {_subTopic}, {_processesTopic}, {_studentTagTopic}, +/+/hunghyper/LocalCenter/status");
                 });
             };
 
@@ -105,7 +107,6 @@ namespace LocalCenterForm
                     if (topic == _subTopic)
                     {
                         Log($"Message received on {topic}: {payload}");
-                        //txtMqttMessages.AppendText($"[{DateTime.Now:HH:mm:ss}] [{topic}] {payload}\r\n");
                         UpdateThongTinTable(payload);
                     }
                     else if (topic == _processesTopic)
@@ -118,10 +119,62 @@ namespace LocalCenterForm
                         Log($"RFID Tag received on {topic}: {payload}");
                         UpdateRfidDisplay(payload);
                     }
+                    else if (topic.EndsWith("/status"))
+                    {
+                        string[] parts = topic.Split('/');
+                        Log($"Received status topic: {topic}, parts: {string.Join(", ", parts)}");
+                        if (parts.Length == 5) // Đảm bảo có đủ 3 phần: roomNumber, comNumber, status
+                        {
+                            string machineId = $"{parts[0]}/{parts[1]}";
+                            dynamic json = JsonConvert.DeserializeObject(payload);
+                            string status = json?.status?.ToString() ?? "Unknown";
+                            Log($"Processing machine {machineId} with status: {status}");
+                            if (!_machines.ContainsKey(machineId))
+                            {
+                                _machines[machineId] = status;
+                                UpdateMachineComboBox();
+                            }
+                            else if (_machines[machineId] != status)
+                            {
+                                _machines[machineId] = status;
+                                UpdateMachineComboBox();
+                            }
+                        }
+                        else
+                        {
+                            Log($"Invalid topic structure: {topic}, expected 3 parts");
+                        }
+                    }
                 });
 
                 return Task.CompletedTask;
             };
+        }
+
+        private void UpdateMachineComboBox()
+        {
+            if (comboBoxMachines.InvokeRequired)
+            {
+                comboBoxMachines.Invoke(new Action(UpdateMachineComboBox));
+            }
+            else
+            {
+                string selectedMachine = comboBoxMachines.SelectedItem?.ToString();
+                comboBoxMachines.Items.Clear();
+                Log($"Updating comboBox with machines: {string.Join(", ", _machines.Where(m => m.Value == "online").Select(m => m.Key))}");
+                foreach (var machine in _machines.Where(m => m.Value == "online"))
+                {
+                    comboBoxMachines.Items.Add(machine.Key);
+                }
+                if (!string.IsNullOrEmpty(selectedMachine) && comboBoxMachines.Items.Contains(selectedMachine))
+                {
+                    comboBoxMachines.SelectedItem = selectedMachine;
+                }
+                else if (comboBoxMachines.Items.Count > 0)
+                {
+                    comboBoxMachines.SelectedIndex = 0;
+                }
+            }
         }
 
         private void UpdateProcessList(string json)
@@ -146,27 +199,6 @@ namespace LocalCenterForm
                 Log($"Error parsing processes: {ex.Message}");
             }
         }
-
-        //private void UpdateRfidDisplay(string json)
-        //{
-        //    try
-        //    {
-        //        var jsonObj = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-        //        if (jsonObj != null && jsonObj.ContainsKey("rfid"))
-        //        {
-        //            var rfidValue = jsonObj["rfid"];
-        //            txtRfid.Text = rfidValue;
-        //        }
-        //        else
-        //        {
-        //            Log("Invalid RFID JSON received");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Log($"Error parsing RFID JSON: {ex.Message}");
-        //    }
-        //}
 
         private async void UpdateRfidDisplay(string json)
         {
@@ -213,7 +245,6 @@ namespace LocalCenterForm
                 Log($"Lỗi xử lý RFID JSON: {ex.Message}");
             }
         }
-
 
         private void UpdateThongTinTable(string json)
         {
@@ -384,6 +415,64 @@ namespace LocalCenterForm
                     Log($"Error updating subscriptions: {ex.Message}");
                 }
             }
+
+            // Check máy hiện tại có online không
+            string currentKey = $"{Properties.Settings.Default.Room}/{Properties.Settings.Default.Computer}";
+            if (!_machines.ContainsKey(currentKey) || _machines[currentKey] != "online")
+            {
+                Log($"Máy {currentKey} không hoạt động hoặc không online.");
+
+                // Xóa thông tin ở các bảng
+                infoDataGrid.Rows.Clear();
+                lvProcesses.Items.Clear();
+                txtRfid.Text = "";
+                dataGridView1.Rows.Clear();
+
+                // Thêm thông báo
+                int rowIndex = infoDataGrid.Rows.Add();
+                infoDataGrid.Rows[rowIndex].Cells[0].Value = "Trạng thái";
+                infoDataGrid.Rows[rowIndex].Cells[1].Value = "Máy không hoạt động";
+            }
+            else
+            {
+                Log($"Máy {currentKey} đang hoạt động.");
+            }
+        }
+
+        private async void btnShowMachines_Click(object sender, EventArgs e)
+        {
+            // Cập nhật danh sách máy từ _machines
+            UpdateMachineComboBox();
+
+            if (comboBoxMachines.Items.Count > 0)
+            {
+                comboBoxMachines.Visible = true;
+                Log("Machine list updated and displayed.");
+            }
+            else
+            {
+                Log("No active machines found.");
+                MessageBox.Show("No active machines found.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void comboBoxMachines_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (comboBoxMachines.SelectedItem != null)
+            {
+                string selectedMachine = comboBoxMachines.SelectedItem.ToString();
+                string[] parts = selectedMachine.Split('/');
+                if (parts.Length == 2)
+                {
+                    Properties.Settings.Default.Room = parts[0].Trim();
+                    Properties.Settings.Default.Computer = parts[1].Trim();
+                    Properties.Settings.Default.Save();
+
+                    UpdateCurrentRoomAndComputerLabels();
+                    InitializeTopics();
+                    Log($"Selected machine: {selectedMachine}. Topics updated to {_subTopic}, {_processesTopic}, {_studentTagTopic}");
+                }
+            }
         }
 
         private void SaveSettings_Click(object sender, EventArgs e)
@@ -403,11 +492,6 @@ namespace LocalCenterForm
         private void Log(string message)
         {
             txtLog.AppendText($"[{DateTime.Now:HH:mm:ss}] {message}\r\n");
-        }
-
-        private void lblCurrentComputer_Click(object sender, EventArgs e)
-        {
-
         }
 
         private async Task<Student> GetStudentInfoFromApi(string rfid)
@@ -438,8 +522,6 @@ namespace LocalCenterForm
                 return null;
             }
         }
-
-        
     }
 
     public class Student
